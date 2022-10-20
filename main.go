@@ -14,5 +14,21 @@ func main() {
 	r := gin.Default()
 	r.GET("/ping", pingHandler)
 
+	api := r.Group("/api")
+	{
+		users := api.Group("/users")
+		{
+			users.GET("/")
+			users.POST("/")
+		}
+		cats := api.Group("/cats")
+		{
+			breeds := cats.Group("/breeds")
+			{
+				breeds.GET("/")
+			}
+		}
+	}
+
 	r.Run(":3000");
 }
