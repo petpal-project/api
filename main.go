@@ -1,6 +1,9 @@
 package main
 
 import (
+	"pet-pal/api/config"
+	"pet-pal/api/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,11 +14,14 @@ func pingHandler(c *gin.Context) {
 }
 
 func main() {
+	authClient := config.InitFirebase()
+
 	r := gin.Default()
 	r.GET("/ping", pingHandler)
 
 	api := r.Group("/api")
 	{
+		api.Use(middleware.TokenAuth(authClient))
 		users := api.Group("/users")
 		{
 			users.GET("/")
@@ -30,5 +36,5 @@ func main() {
 		}
 	}
 
-	r.Run(":3000");
+	r.Run(":3000")
 }
