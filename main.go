@@ -16,20 +16,20 @@ func pingHandler(c *gin.Context) {
 func main() {
 	authClient := config.InitFirebase()
 
-	r := gin.Default()
+	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
 
-	api := r.Group("/api")
+	var api *gin.RouterGroup = r.Group("/api")
 	{
 		api.Use(middleware.TokenAuth(authClient))
-		users := api.Group("/users")
+		var users *gin.RouterGroup = api.Group("/users")
 		{
 			users.GET("/")
 			users.POST("/")
 		}
-		cats := api.Group("/cats")
+		var cats *gin.RouterGroup = api.Group("/cats")
 		{
-			breeds := cats.Group("/breeds")
+			var breeds *gin.RouterGroup = cats.Group("/breeds")
 			{
 				breeds.GET("/")
 			}
