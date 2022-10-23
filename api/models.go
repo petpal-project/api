@@ -11,57 +11,59 @@ type User struct {
 	AccountID string `json:"accountId"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+	Pets      []Pet  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Pet struct {
 	gorm.Model
-	UserID      uint `json:"userId"`
-	User        User
-	Name        string `json:"name"`
-	Breeds      []Breed
-	Species     Species
-	Age         uint `json:"age"`
-	Images      []Image
-	Meals       []Meal
-	Medications []Medication
+	UserID       uint          `json:"userId"`
+	Name         string        `json:"name"`
+	Breeds       []Breed       `gorm:"many2many:pet_breeds;"`
+	SpeciesID    uint          `json:"speciesId"`
+	Species      Species       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Age          uint          `json:"age"`
+	Images       []Image       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Meals        []Meal        `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Medications  []Medication  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	HealthEvents []HealthEvent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Species struct {
 	gorm.Model
-	Name         string
-	BinomialName string
+	Name         string `json:"name"`
+	BinomialName string `json:"binomialName"`
 }
 
 type Breed struct {
 	gorm.Model
-	SpeciesID    uint
+	SpeciesID    uint `json:"speciesId"`
 	Species      Species
-	Name         string
-	Size         string
-	HeightMale   float64
-	HeightFemale float64
-	WeightMale   float64
-	WeightFemale float64
-	Coat         string
-	CoatDesc     string
-	Colors       []string
-	ColorsDesc   string
-	Energy       string
-	Activities   []string
+	Name         string   `json:"name"`
+	Size         string   `json:"size"`
+	HeightMale   float64  `json:"heightMale"`
+	HeightFemale float64  `json:"heightFemale"`
+	WeightMale   float64  `json:"weightMale"`
+	WeightFemale float64  `json:"weightFemale"`
+	Coat         string   `json:"coat"`
+	CoatDesc     string   `json:"coatDesc"`
+	Colors       []string `json:"colors"`
+	ColorsDesc   string   `json:"colorsDesc"`
+	Energy       string   `json:"energy"`
+	Activities   []string `json:"activities"`
 }
 
 type Meal struct {
 	gorm.Model
 	PetID     uint
-	Frequency []time.Time
-	Food      []Food
+	Frequency uint
+	Food      []Food `gorm:"many2many:meal_foods;"`
 }
 
 type Food struct {
 	gorm.Model
 	Category    string
 	TargetAge   uint
-	description string
+	Description string
 }
 
 type Medication struct {
@@ -70,7 +72,7 @@ type Medication struct {
 	Frequency uint
 	StartDate time.Time
 	EndDate   time.Time
-	Medicine  Medicine
+	Medicine  Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Medicine struct {
@@ -89,6 +91,7 @@ type HealthEvent struct {
 
 type Image struct {
 	gorm.Model
+	PetID       uint
 	AssetUrl    string
 	Description string
 }
