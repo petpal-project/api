@@ -8,7 +8,7 @@ import (
 	"firebase.google.com/go/v4/auth"
 )
 
-func InitFirebase() *auth.Client{
+func InitFirebase() *auth.Client {
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("Error initializing Firebase app: %v\n", err)
