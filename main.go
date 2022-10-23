@@ -15,6 +15,7 @@ func pingHandler(c *gin.Context) {
 
 func main() {
 	authClient := config.InitFirebase()
+	config.InitDb()
 
 	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
