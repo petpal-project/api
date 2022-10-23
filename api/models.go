@@ -68,17 +68,17 @@ type Food struct {
 
 type Medication struct {
 	gorm.Model
-	PetID     uint
-	Frequency uint
-	StartDate time.Time
-	EndDate   time.Time
-	Medicine  Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	PetID      uint
+	Frequency  uint
+	StartDate  time.Time
+	EndDate    time.Time
+	MedicineID uint
+	Medicine   Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Medicine struct {
 	gorm.Model
-	MedicationID uint
-	Description  string
+	Description string
 }
 
 type HealthEvent struct {
