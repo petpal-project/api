@@ -9,7 +9,7 @@ import (
 )
 
 func TokenAuth(client *auth.Client) gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		headerToken := strings.Replace(authHeader, "Bearer ", "", 1)
 		token, err := client.VerifyIDToken(context.Background(), headerToken)
