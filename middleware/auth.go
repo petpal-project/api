@@ -2,13 +2,15 @@ package middleware
 
 import (
 	"context"
+	"pet-pal/api/controllers"
 	"strings"
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func TokenAuth(client *auth.Client) gin.HandlerFunc {
+func TokenAuth(client *auth.Client, db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.Request.Header.Get("Authorization")
 		headerToken := strings.Replace(authHeader, "Bearer ", "", 1)
@@ -18,7 +20,8 @@ func TokenAuth(client *auth.Client) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("user", token.UID)
+		var userId uint = controllers.GetUserIdFromFirebaseId(token.UID, db)
+		c.Set("user", userId)
 		c.Next()
 	}
 }
