@@ -4,36 +4,25 @@ baseUri: http://localhost:3000/api
 version: 1.0
 
 /users:
-  get:
-    responses: 
-          200:
-  put:
-  post:
-  delete:
   /{userId}:
-    get:
-      responses: 
-              200:
-
-    put:
-      responses: 
-              200: 
-              
-    post:
-      responses: 
-              200:
-    delete:
-      responses:
-              200:
     /pet:
-      get:
-      put:
-      post:
-      delete:
-    /{petId}:
-      get:
-      put:
-      post:
-      delete:
-  
+      /{petId}:
+        /breeds:
+          /{breedId}:
+        /meals:
+          /{mealId}:
+        /medications:
+          /{medicationId}:
+        /healthevents:
+          /{healtheventsId}:
+        /images:
+          /{imageId}:
+/species:
+  /{speciesId}:
+/breeds:
+  /{breedId}:  
+/foods:
+  /{foodId}:
+/medicines:
+  /{medicineId}:
 
