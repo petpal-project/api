@@ -8,6 +8,8 @@ import (
 	"firebase.google.com/go/v4/auth"
 )
 
+var AuthClient *auth.Client
+
 func InitFirebase() *auth.Client {
 	app, err := firebase.NewApp(context.Background(), nil)
 	if err != nil {
@@ -19,5 +21,6 @@ func InitFirebase() *auth.Client {
 		log.Fatalf("Error setting up FB Auth client %v\n", err)
 	}
 
+	AuthClient = client
 	return client
 }
