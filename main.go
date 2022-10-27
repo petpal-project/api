@@ -29,6 +29,7 @@ func main() {
 		{
 			users.GET("/", controllers.GetUser)
 			users.POST("/", controllers.PostUser)
+			users.DELETE("/", controllers.DeleteUser)
 		}
 		var cats *gin.RouterGroup = api.Group("/cats")
 		{
