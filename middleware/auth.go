@@ -20,10 +20,7 @@ func TokenAuth(client *auth.Client, db *gorm.DB) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		var userId uint = controllers.GetUserIdFromFirebaseId(token.UID, db)
-		if userId == 0 {
-			c.JSON(500, gin.H{"error": "User associated with the token does not exist in database"})
-		}
+		var userId uint = controllers.GetUserIdFromFirebaseId(token.UID)
 		c.Set("user", userId)
 		c.Next()
 	}
