@@ -21,14 +21,23 @@ func PostUser(DB *gorm.DB, fname string, lname string, tokenUID string, userID u
 	DB.Create(&user)
 }
 
-func GetUser(DB *gorm.DB, c *gin.Context) *models.User {
+func GetUser(DB *gorm.DB, c *gin.Context) {
 	userId, err := c.Get("user")
 	if !err {
 		var user models.User
 		DB.Where("id = ?", userId).First(&user)
-		return &user
+		c.JSON(200, user)
 	} else {
 		c.JSON(400, gin.H{"error": "User does not exist"})
-		return nil
+	}
+}
+
+func DeleteUser(DB *gorm.DB, c *gin.Context) {
+	userId, err := c.Get("user")
+	if !err {
+		var user models.User
+		DB.Where("id = ?", userId).Delete(&user)
+	} else {
+		c.JSON(400, gin.H{"error": "User does not exist"})
 	}
 }
