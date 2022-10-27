@@ -2,6 +2,7 @@ package main
 
 import (
 	"pet-pal/api/config"
+	"pet-pal/api/controllers"
 	"pet-pal/api/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -26,8 +27,8 @@ func main() {
 		api.Use(middleware.TokenAuth(authClient, DB))
 		var users *gin.RouterGroup = api.Group("/users")
 		{
-			users.GET("/")
-			users.POST("/")
+			users.GET("/", controllers.GetUser)
+			users.POST("/", controllers.PostUser)
 		}
 		var cats *gin.RouterGroup = api.Group("/cats")
 		{

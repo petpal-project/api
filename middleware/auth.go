@@ -20,7 +20,7 @@ func TokenAuth(client *auth.Client, db *gorm.DB) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		var userId uint = controllers.GetUserIdFromFirebaseId(token.UID, db)
+		var userId uint = controllers.GetUserIdFromFirebaseId(token.UID)
 		c.Set("user", userId)
 		c.Next()
 	}
