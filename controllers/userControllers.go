@@ -18,11 +18,16 @@ func GetUserIdFromFirebaseId(tokenUID string) uint {
 func PostUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var user models.User
-
-	if err := c.BindJSON(&user); err != nil {
-		return
+	userId, exists := c.Get("user")
+	if exists {
+		if err := c.BindJSON(&user); err != nil {
+			return
+		}
+		user.ID = uint(userId.(int))
+		DB.Create(&user)
+	} else {
+		c.JSON(400, gin.H{"error": "No User ID in request"})
 	}
-	DB.Create(&user)
 }
 
 func GetUser(c *gin.Context) {
