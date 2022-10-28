@@ -6,14 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
-	gorm.Model
-	AccountID string `json:"accountId"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Pets      []Pet  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-}
-
 type Pet struct {
 	gorm.Model
 	UserID       uint          `json:"userId"`
