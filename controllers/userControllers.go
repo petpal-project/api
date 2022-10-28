@@ -26,8 +26,8 @@ func PostUser(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	userId, err := c.Get("user")
-	if !err {
+	userId, exists := c.Get("user")
+	if exists {
 		var user models.User
 		DB.Where("id = ?", userId).First(&user)
 		c.JSON(200, user)
@@ -37,8 +37,8 @@ func GetUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
-	userId, err := c.Get("user")
-	if !err {
+	userId, exists := c.Get("user")
+	if exists {
 		var user models.User
 		DB.Where("id = ?", userId).Delete(&user)
 	} else {
