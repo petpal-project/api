@@ -32,7 +32,7 @@ func GetUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 
 	if exists {
-		DB.Where("id = ?", uint(userId.(int))).First(&user)
+		DB.First(&user, "id = ?", uint(userId.(int)))
 		c.JSON(200, user)
 	} else {
 		c.JSON(400, gin.H{"error": "No User ID in request"})
