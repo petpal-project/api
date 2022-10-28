@@ -6,7 +6,6 @@ import (
 	"pet-pal/api/middleware"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func pingHandler(c *gin.Context) {
@@ -16,15 +15,16 @@ func pingHandler(c *gin.Context) {
 }
 
 func main() {
-	authClient := config.InitFirebase()
-	var DB *gorm.DB = config.InitDb()
+	// authClient := config.InitFirebase()
+	config.InitDb()
 
 	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
 
 	var api *gin.RouterGroup = r.Group("/api")
 	{
-		api.Use(middleware.TokenAuth(authClient, DB))
+		// api.Use(middleware.TokenAuth(authClient, DB))
+		api.Use(middleware.TempUserAuth)
 		var users *gin.RouterGroup = api.Group("/users")
 		{
 			users.GET("/", controllers.GetUser)

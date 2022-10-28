@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"pet-pal/api/controllers"
+	"strconv"
 	"strings"
 
 	"firebase.google.com/go/v4/auth"
@@ -24,4 +25,18 @@ func TokenAuth(client *auth.Client, db *gorm.DB) gin.HandlerFunc {
 		c.Set("user", userId)
 		c.Next()
 	}
+}
+
+func TempUserAuth(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	userId, err := strconv.Atoi(authHeader)
+	if err != nil {
+		c.JSON(401, gin.H{
+			"error": "Auth header must be a userId (int)",
+		})
+		c.Abort()
+		return
+	}
+	c.Set("user", userId)
+	c.Next()
 }
