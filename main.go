@@ -31,12 +31,30 @@ func main() {
 			users.POST("/", controllers.PostUser)
 			users.DELETE("/", controllers.DeleteUser)
 		}
-		var cats *gin.RouterGroup = api.Group("/cats")
+		var pets *gin.RouterGroup = api.Group("/pets")
 		{
-			var breeds *gin.RouterGroup = cats.Group("/breeds")
-			{
-				breeds.GET("/")
-			}
+			pets.GET("/", controllers.GetPet)
+			pets.POST("/", controllers.PostPet)
+		}
+		var species *gin.RouterGroup = api.Group("/species")
+		{
+			species.GET("/")
+			species.POST("/")
+		}
+		var breeds *gin.RouterGroup = api.Group("/breeds")
+		{
+			breeds.GET("/")
+			breeds.POST("/")
+		}
+		var foods *gin.RouterGroup = api.Group("/foods")
+		{
+			foods.GET("/")
+			foods.POST("/")
+		}
+		var medicines *gin.RouterGroup = api.Group("/medicines")
+		{
+			medicines.GET("/")
+			medicines.POST("/")
 		}
 	}
 
