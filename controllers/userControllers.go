@@ -8,15 +8,15 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB = config.DB
-
 func GetUserIdFromFirebaseId(tokenUID string) uint {
+	var DB *gorm.DB = config.DB
 	var user models.User
 	DB.Where("accountID = ?", tokenUID).First(&user)
 	return user.ID
 }
 
 func PostUser(c *gin.Context) {
+	var DB *gorm.DB = config.DB
 	var user models.User
 	userId, exists := c.Get("user")
 	if exists {
@@ -26,9 +26,11 @@ func PostUser(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
+	var DB *gorm.DB = config.DB
 	userId, exists := c.Get("user")
+	userId = uint(userId.(int))
+	var user models.User
 	if exists {
-		var user models.User
 		DB.Where("id = ?", userId).First(&user)
 		c.JSON(200, user)
 	} else {
@@ -37,6 +39,7 @@ func GetUser(c *gin.Context) {
 }
 
 func DeleteUser(c *gin.Context) {
+	var DB *gorm.DB = config.DB
 	userId, exists := c.Get("user")
 	if exists {
 		var user models.User
