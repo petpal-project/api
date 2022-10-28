@@ -18,33 +18,38 @@ func GetUserIdFromFirebaseId(tokenUID string) uint {
 func PostUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var user models.User
-	userId, exists := c.Get("user")
-	if exists {
-		user.ID = userId.(uint)
-		DB.Create(&user)
+
+	if err := c.BindJSON(&user); err != nil {
+		return
 	}
+	DB.Create(&user)
 }
 
 func GetUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-	userId, exists := c.Get("user")
-	userId = uint(userId.(int))
 	var user models.User
+
+	userId, exists := c.Get("user")
+
 	if exists {
-		DB.Where("id = ?", userId).First(&user)
+		DB.Where("id = ?", uint(userId.(int))).First(&user)
 		c.JSON(200, user)
 	} else {
-		c.JSON(400, gin.H{"error": "User does not exist"})
+		c.JSON(400, gin.H{"error": "No User ID in request"})
 	}
 }
 
 func DeleteUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
+	var user models.User
+
 	userId, exists := c.Get("user")
+	userId = uint(userId.(int))
+
 	if exists {
-		var user models.User
-		DB.Where("id = ?", userId).Delete(&user)
+		DB.Unscoped().Where("id = ?", userId).Delete(&user)
+		c.JSON(200, gin.H{"success": "user deleted"})
 	} else {
-		c.JSON(400, gin.H{"error": "User does not exist"})
+		c.JSON(400, gin.H{"error": "No User ID in request"})
 	}
 }
