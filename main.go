@@ -1,6 +1,10 @@
 package main
 
 import (
+	"pet-pal/api/config"
+	"pet-pal/api/controllers"
+	"pet-pal/api/middleware"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,24 +15,48 @@ func pingHandler(c *gin.Context) {
 }
 
 func main() {
-	r := gin.Default()
+	// authClient := config.InitFirebase()
+	config.InitDb()
+
+	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
 
-	api := r.Group("/api")
+	var api *gin.RouterGroup = r.Group("/api")
 	{
-		users := api.Group("/users")
+		// api.Use(middleware.TokenAuth(authClient, DB))
+		api.Use(middleware.TempUserAuth)
+		var users *gin.RouterGroup = api.Group("/users")
 		{
-			users.GET("/")
-			users.POST("/")
+			users.GET("/", controllers.GetUser)
+			users.POST("/", controllers.PostUser)
+			users.DELETE("/", controllers.DeleteUser)
 		}
-		cats := api.Group("/cats")
+		var pets *gin.RouterGroup = api.Group("/pets")
 		{
-			breeds := cats.Group("/breeds")
-			{
-				breeds.GET("/")
-			}
+			pets.GET("/", controllers.GetPet)
+			pets.POST("/", controllers.PostPet)
+		}
+		var species *gin.RouterGroup = api.Group("/species")
+		{
+			species.GET("/")
+			species.POST("/")
+		}
+		var breeds *gin.RouterGroup = api.Group("/breeds")
+		{
+			breeds.GET("/")
+			breeds.POST("/")
+		}
+		var foods *gin.RouterGroup = api.Group("/foods")
+		{
+			foods.GET("/")
+			foods.POST("/")
+		}
+		var medicines *gin.RouterGroup = api.Group("/medicines")
+		{
+			medicines.GET("/")
+			medicines.POST("/")
 		}
 	}
 
-	r.Run(":3000");
+	r.Run(":3000")
 }
