@@ -22,3 +22,20 @@ func GetPet(c *gin.Context) {
 		c.JSON(400, "Missing Pet or User ID")
 	}
 }
+
+func PostPet(c *gin.Context) {
+	var DB *gorm.DB = config.DB
+	var pet *models.Pet
+
+	uid, userExists := c.Get("user")
+
+	if err := c.BindJSON(&pet); err != nil {
+		return
+	}
+	if userExists {
+		pet.UserID = uint(uid.(int))
+		DB.Create(&pet)
+	} else {
+		c.JSON(400, "Missing User ID in request")
+	}
+}

@@ -17,37 +17,33 @@ func GetUserIdFromFirebaseId(tokenUID string) uint {
 
 func PostUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-	var user models.User
+	var user *models.User
 
 	if err := c.BindJSON(&user); err != nil {
 		return
 	}
-	DB.Create(&user)
+	models.CreateUser(user, DB)
 }
 
 func GetUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-	var user models.User
+	var user *models.User
 
 	userId, exists := c.Get("user")
-
 	if exists {
-		DB.First(&user, "id = ?", uint(userId.(int)))
-		c.JSON(200, user)
+		user = models.RetrieveUser(uint(userId.(int)), DB)
+		c.JSON(200, &user)
 	} else {
-		c.JSON(400, gin.H{"error": "No User ID in request"})
+		c.JSON(400, ": (")
 	}
 }
 
 func DeleteUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-	var user models.User
-
 	userId, exists := c.Get("user")
-	userId = uint(userId.(int))
 
 	if exists {
-		DB.Unscoped().Where("id = ?", userId).Delete(&user)
+		models.DeleteUser(uint(userId.(int)), DB)
 		c.JSON(200, gin.H{"success": "user deleted"})
 	} else {
 		c.JSON(400, gin.H{"error": "No User ID in request"})
