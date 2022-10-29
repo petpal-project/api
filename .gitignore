@@ -22,7 +22,10 @@
 # Go workspace file
 go.work
 
+#Docker
+.env.list
+
 .env
 env.bat
 *.key.json
-*.cmd 
+*.cmd
