@@ -6,20 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Pet struct {
-	gorm.Model
-	UserID       uint          `json:"userId"`
-	Name         string        `json:"name"`
-	Breeds       []Breed       `gorm:"many2many:pet_breeds;"`
-	SpeciesID    uint          `json:"speciesId"`
-	Species      Species       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Age          uint          `json:"age"`
-	Images       []Image       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Meals        []Meal        `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Medications  []Medication  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	HealthEvents []HealthEvent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-}
-
 type Species struct {
 	gorm.Model
 	Name         string `json:"name"`

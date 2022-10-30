@@ -35,6 +35,7 @@ func main() {
 		{
 			pets.GET("/", controllers.GetPet)
 			pets.POST("/", controllers.PostPet)
+			pets.DELETE("/", controllers.DeletePet)
 		}
 		var species *gin.RouterGroup = api.Group("/species")
 		{
