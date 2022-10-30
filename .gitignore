@@ -22,6 +22,9 @@
 # Go workspace file
 go.work
 
+# VSCode
+.vscode
+
 #Docker
 .env.list
 
