@@ -20,12 +20,6 @@ type Pet struct {
 	HealthEvents []HealthEvent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-type Species struct {
-	gorm.Model
-	Name         string `json:"name"`
-	BinomialName string `json:"binomialName"`
-}
-
 type Breed struct {
 	gorm.Model
 	SpeciesID    uint `json:"speciesId"`
