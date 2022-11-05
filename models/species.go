@@ -1,6 +1,8 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Species struct {
 	gorm.Model
@@ -8,8 +10,13 @@ type Species struct {
 	BinomialName string `json:"binomialName"`
 }
 
-func RetrieveSpecies(speciesId uint, DB *gorm.DB) *Species {
+func RetrieveSpecies(speciesId uint, DB *gorm.DB) (*Species, error) {
 	var species *Species
-	DB.First(&species, "id = ?", speciesId)
-	return species
+	var err error
+	if err = DB.First(&species, "id = ?", speciesId).Error; err != nil {
+		return species, err
+	} else {
+		return species, err
+	}
+
 }
