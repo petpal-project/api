@@ -38,7 +38,7 @@ func main() {
 		}
 		var species *gin.RouterGroup = api.Group("/species")
 		{
-			species.GET("/", controllers.GetSpecies)
+			species.GET("/:speciesId", controllers.GetSpecies)
 			species.POST("/")
 		}
 		var breeds *gin.RouterGroup = api.Group("/breeds")

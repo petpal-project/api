@@ -3,6 +3,7 @@ package controllers
 import (
 	"pet-pal/api/config"
 	"pet-pal/api/models"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -11,12 +12,12 @@ import (
 func GetSpecies(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var species *models.Species
-	var requestBody models.RequestBody
-
-	if err := c.BindHeader(&requestBody); err != nil {
-		return
+	sid, err := strconv.Atoi(c.Param("speciesId"))
+	if err == nil {
+		species = models.RetrieveSpecies(uint(sid), DB)
+		c.JSON(200, species)
+	} else {
+		c.JSON(400, "Bad Species Id")
 	}
-	var sid uint = requestBody.SpeciesId
-	species = models.RetrieveSpecies(sid, DB)
-	c.JSON(200, species)
+
 }
