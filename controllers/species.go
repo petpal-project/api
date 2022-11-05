@@ -12,12 +12,14 @@ import (
 func GetSpecies(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var species *models.Species
+
 	sid, err := strconv.Atoi(c.Param("speciesId"))
+
 	if err == nil {
 		species = models.RetrieveSpecies(uint(sid), DB)
 		c.JSON(200, species)
 	} else {
-		c.JSON(400, "Bad Species Id")
+		c.JSON(400, "Species ID must be numeric")
 	}
 
 }
