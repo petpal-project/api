@@ -11,7 +11,7 @@ import (
 func GetUserIdFromFirebaseId(tokenUID string) uint {
 	var DB *gorm.DB = config.DB
 	var user models.User
-	DB.Where("accountID = ?", tokenUID).First(&user)
+	DB.Where("account_id = ?", tokenUID).First(&user)
 	return user.ID
 }
 
@@ -31,7 +31,7 @@ func GetUser(c *gin.Context) {
 
 	userId, exists := c.Get("user")
 	if exists {
-		user = models.RetrieveUser(uint(userId.(int)), DB)
+		user = models.RetrieveUser(userId.(uint), DB)
 		c.JSON(200, &user)
 	} else {
 		c.JSON(400, ": (")
