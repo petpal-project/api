@@ -33,8 +33,11 @@ func main() {
 		}
 		var pets *gin.RouterGroup = api.Group("/pets")
 		{
-			pets.GET("/", controllers.GetPet)
+			pets.GET("/", controllers.GetPets)
+			pets.GET("/:petId", controllers.GetPet)
 			pets.POST("/", controllers.PostPet)
+			pets.PUT("/:petId", controllers.PutPet)
+			pets.DELETE("/:petId", controllers.DeletePet)
 		}
 		var species *gin.RouterGroup = api.Group("/species")
 		{
