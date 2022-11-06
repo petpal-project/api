@@ -12,7 +12,7 @@ import (
 func GetUserIdFromFirebaseId(tokenUID string) uint {
 	var DB *gorm.DB = config.DB
 	var user models.User
-	DB.Where("accountID = ?", tokenUID).First(&user)
+	DB.Where("account_id = ?", tokenUID).First(&user)
 	return user.ID
 }
 
