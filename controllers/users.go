@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"pet-pal/api/config"
 	"pet-pal/api/models"
 
@@ -22,19 +23,29 @@ func PostUser(c *gin.Context) {
 	if err := c.BindJSON(&user); err != nil {
 		return
 	}
-	models.CreateUser(user, DB)
+	err := models.CreateUser(user, DB)
+	if err != nil {
+		c.JSON(500, "Internal Server Error")
+	} else {
+		c.JSON(200, fmt.Sprintf("User with ID %d Created", user.ID))
+	}
 }
 
 func GetUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var user *models.User
+	var err error
 
 	userId, exists := c.Get("user")
 	if exists {
-		user = models.RetrieveUser(uint(userId.(int)), DB)
-		c.JSON(200, &user)
+		user, err = models.RetrieveUser(uint(userId.(int)), DB)
+		if err != nil {
+			c.JSON(500, "Internal Server Error")
+		} else {
+			c.JSON(200, &user)
+		}
 	} else {
-		c.JSON(400, ": (")
+		c.JSON(400, "Missing User ID in Authorization Header")
 	}
 }
 
@@ -43,8 +54,12 @@ func DeleteUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 
 	if exists {
-		models.DeleteUser(uint(userId.(int)), DB)
-		c.JSON(200, gin.H{"success": "user deleted"})
+		err := models.DeleteUser(uint(userId.(int)), DB)
+		if err != nil {
+			c.JSON(500, "Internal Server Error")
+		} else {
+			c.JSON(200, gin.H{"success": "user deleted"})
+		}
 	} else {
 		c.JSON(400, gin.H{"error": "No User ID in request"})
 	}
