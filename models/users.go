@@ -12,25 +12,26 @@ type User struct {
 	Pets      []Pet  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-func GetUserIdFromFirebaseId(tokenUID string, DB *gorm.DB) uint {
+func GetUserIdFromFirebaseId(tokenUID string, DB *gorm.DB) (uint, error) {
 	var user User
-	DB.Where("accountID = ?", tokenUID).First(&user)
-	return user.ID
+	var err error = DB.Where("accountID = ?", tokenUID).First(&user).Error
+	return user.ID, err
 }
 
-func CreateUser(user *User, DB *gorm.DB) {
-	DB.Create(&user)
+func CreateUser(user *User, DB *gorm.DB) error {
+	var err error = DB.Create(&user).Error
+	return err
 }
 
-func RetrieveUser(userId uint, DB *gorm.DB) *User {
+func RetrieveUser(userId uint, DB *gorm.DB) (*User, error) {
 	var user *User
-	DB.First(&user, "id = ?", userId)
-
-	return user
+	var err error = DB.First(&user, "id = ?", userId).Error
+	return user, err
 }
 
 // TODO: make this return a bool
-func DeleteUser(userId uint, DB *gorm.DB) {
+func DeleteUser(userId uint, DB *gorm.DB) error {
 	var user User
-	DB.Unscoped().Where("id = ?", userId).Delete(&user)
+	var err error = DB.Unscoped().Where("id = ?", userId).Delete(&user).Error
+	return err
 }
