@@ -18,17 +18,30 @@ type Pet struct {
 	HealthEvents []HealthEvent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-func CreatePet(pet *Pet, DB *gorm.DB) {
-	DB.Create(&pet)
+func CreatePet(pet *Pet, DB *gorm.DB) error {
+	var err error = DB.Create(&pet).Error
+	return err
 }
 
-func RetrievePet(petId uint, userId uint, DB *gorm.DB) *Pet {
+func RetrievePet(petId uint, userId uint, DB *gorm.DB) (*Pet, error) {
 	var pet *Pet
-	DB.First(&pet, "id = ? AND user_id = ?", petId, userId)
-	return pet
+	var err error = DB.First(&pet, "id = ? AND user_id = ?", petId, userId).Error
+	return pet, err
 }
 
-func DeletePet(petId uint, userId uint, DB *gorm.DB) {
+func RetrievePets(userId uint, DB *gorm.DB) (*[]Pet, error) {
+	var pets *[]Pet
+	var err error = DB.Find(&pets, "user_id = ?", userId).Error
+	return pets, err
+}
+
+func UpdatePet(userId uint, petId uint, pet *Pet, DB *gorm.DB) error {
+	var err error = DB.Model(&pet).Where("id = ? AND user_id = ?", petId, userId).Updates(&pet).Error
+	return err
+}
+
+func DeletePet(petId uint, userId uint, DB *gorm.DB) error {
 	var pet *Pet
-	DB.Delete(&pet, "id = ? AND user_id = ?", petId, userId)
+	var err error = DB.Delete(&pet, "id = ? AND user_id = ?", petId, userId).Error
+	return err
 }
