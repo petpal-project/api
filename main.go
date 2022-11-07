@@ -6,6 +6,7 @@ import (
 	"pet-pal/api/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerMiddleware "github.com/go-openapi/runtime/middleware"
 )
 
 func pingHandler(c *gin.Context) {
@@ -20,6 +21,10 @@ func main() {
 
 	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
+
+	opts := swaggerMiddleware.SwaggerUIOpts{SpecURL: "docs/openapi.yml"}
+	sh := swaggerMiddleware.SwaggerUI(opts, nil)
+	r.GET("/docs/*any", gin.WrapH(sh))
 
 	var api *gin.RouterGroup = r.Group("/api")
 	{
