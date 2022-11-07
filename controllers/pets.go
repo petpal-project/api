@@ -10,9 +10,7 @@ import (
 )
 
 const idMustBeNumeric = "Pet Id must be numeric"
-const ISE = "Internal Server Error"
 const missingUserId = "Missing User ID"
-const badRequestBody = "Request Body Invalid"
 
 func GetPet(c *gin.Context) {
 	var DB *gorm.DB = config.DB
@@ -28,7 +26,7 @@ func GetPet(c *gin.Context) {
 	} else {
 		pet, err = models.RetrievePet(uint(pid), uint(uid.(int)), DB)
 		if err != nil {
-			c.JSON(500, ISE)
+			c.JSON(500, err.Error())
 		} else {
 			c.JSON(200, &pet)
 		}
@@ -45,7 +43,7 @@ func GetPets(c *gin.Context) {
 	if userExists {
 		pets, err = models.RetrievePets(uint(uid.(int)), DB)
 		if err != nil {
-			c.JSON(500, ISE)
+			c.JSON(500, err.Error())
 		} else {
 			c.JSON(200, pets)
 		}
@@ -57,18 +55,17 @@ func PostPet(c *gin.Context) {
 	var pet *models.Pet
 	var err error
 	uid, userExists := c.Get("user")
-
 	if !userExists {
 		c.JSON(400, missingUserId)
 	} else {
 		if err = c.BindJSON(&pet); err != nil {
-			c.JSON(400, badRequestBody)
+			c.JSON(400, err.Error())
 		} else {
 			pet.UserID = uint(uid.(int))
 			if err = models.CreatePet(pet, DB); err != nil {
-				c.JSON(500, ISE)
+				c.JSON(500, err.Error())
 			} else {
-				c.JSON(200, "Pet Posted")
+				c.JSON(200, &pet)
 			}
 		}
 	}
@@ -81,17 +78,16 @@ func PutPet(c *gin.Context) {
 
 	uid, userExists := c.Get("user")
 	pid, err := strconv.Atoi(c.Param("petId"))
-
 	if !userExists {
 		c.JSON(400, missingUserId)
 	} else if err != nil {
 		c.JSON(400, idMustBeNumeric)
 	} else if err = c.BindJSON(&pet); err != nil {
-		c.JSON(400, badRequestBody)
-	} else if err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
-		c.JSON(500, ISE)
+		c.JSON(400, err.Error())
+	} else if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
+		c.JSON(500, err.Error())
 	} else {
-		c.JSON(200, "Pet Updated")
+		c.JSON(201, &pet)
 	}
 }
 
@@ -106,9 +102,9 @@ func DeletePet(c *gin.Context) {
 	if userExists {
 		err = models.DeletePet(uint(pid), uint(uid.(int)), DB)
 		if err != nil {
-			c.JSON(500, ISE)
+			c.JSON(500, err.Error())
 		} else {
-			c.JSON(200, "Pet Deleted")
+			c.Status(204)
 		}
 	} else {
 		c.JSON(400, missingUserId)
