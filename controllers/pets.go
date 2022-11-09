@@ -57,16 +57,14 @@ func PostPet(c *gin.Context) {
 	uid, userExists := c.Get("user")
 	if !userExists {
 		c.JSON(400, missingUserId)
+	} else if err = c.BindJSON(&pet); err != nil {
+		c.JSON(400, err.Error())
 	} else {
-		if err = c.BindJSON(&pet); err != nil {
-			c.JSON(400, err.Error())
+		pet.UserID = uint(uid.(int))
+		if err = models.CreatePet(pet, DB); err != nil {
+			c.JSON(500, err.Error())
 		} else {
-			pet.UserID = uint(uid.(int))
-			if err = models.CreatePet(pet, DB); err != nil {
-				c.JSON(500, err.Error())
-			} else {
-				c.JSON(200, &pet)
-			}
+			c.JSON(200, &pet)
 		}
 	}
 }
