@@ -42,12 +42,11 @@ func main() {
 		var species *gin.RouterGroup = api.Group("/species")
 		{
 			species.GET("/:speciesId", controllers.GetSpecies)
-			species.POST("/")
 		}
 		var breeds *gin.RouterGroup = api.Group("/breeds")
 		{
-			breeds.GET("/")
-			breeds.POST("/")
+			breeds.GET("/", controllers.GetBreeds)
+			breeds.GET("/:breedId", controllers.GetBreed)
 		}
 		var foods *gin.RouterGroup = api.Group("/foods")
 		{
