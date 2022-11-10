@@ -64,20 +64,27 @@ func main() {
 		var meals *gin.RouterGroup = api.Group("/meals")
 		{
 			meals.GET("/:mealId")
-			meals.GET("/:petId")
+			meals.GET("/pet/:petId")
 			meals.PUT("/:mealId")
-			meals.POST("/:petId") // Is this the best way to do this?
-			meals.PUT("/:mealId")
+			meals.POST("/")
 			meals.DELETE("/:mealId")
+
 		}
 		var medications *gin.RouterGroup = api.Group("/medications")
 		{
 			medications.GET("/:medicationId")
-			medications.GET("/:petId")
+			medications.GET("/pets/:petId")
 			medications.PUT("/:medicationId")
-			medications.POST("/:petId") // Is this the best way to do this?
-			medications.PUT("/:medicationId")
+			medications.POST("/")
 			medications.DELETE("/:medicationId")
+		}
+		var healthEvents *gin.RouterGroup = api.Group("/healthEvents")
+		{
+			healthEvents.GET("/:healthEventsId")
+			healthEvents.GET("/pets/:petId")
+			healthEvents.PUT("/:healthEventsId")
+			healthEvents.POST("/")
+			healthEvents.DELETE("/:healthEventsId")
 		}
 	}
 
