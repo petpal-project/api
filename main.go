@@ -51,13 +51,33 @@ func main() {
 		}
 		var foods *gin.RouterGroup = api.Group("/foods")
 		{
+			foods.GET("/:foodId")
 			foods.GET("/")
-			foods.POST("/")
 		}
 		var medicines *gin.RouterGroup = api.Group("/medicines")
 		{
+			medicines.GET("/:medicineId")
 			medicines.GET("/")
-			medicines.POST("/")
+		}
+		// for these two groups, could we want to have a new router group like
+		// petMeals = *gin.RouterGroup = api.Group("/:mealId") ?
+		var meals *gin.RouterGroup = api.Group("/meals")
+		{
+			meals.GET("/:mealId")
+			meals.GET("/:petId")
+			meals.PUT("/:mealId")
+			meals.POST("/:petId") // Is this the best way to do this?
+			meals.PUT("/:mealId")
+			meals.DELETE("/:mealId")
+		}
+		var medications *gin.RouterGroup = api.Group("/medications")
+		{
+			medications.GET("/:medicationId")
+			medications.GET("/:petId")
+			medications.PUT("/:medicationId")
+			medications.POST("/:petId") // Is this the best way to do this?
+			medications.PUT("/:medicationId")
+			medications.DELETE("/:medicationId")
 		}
 	}
 
