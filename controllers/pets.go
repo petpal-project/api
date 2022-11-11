@@ -32,13 +32,13 @@ type putPetRequestBody struct {
 	HealthEventIDs []uint `json:"healthEventIDs"`
 }
 
-func (reqBody *postPetRequestBody) bindPostToPet(pet *models.Pet) {
+func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet) {
 	pet.Name = reqBody.Name
 	pet.Age = reqBody.Age
 	pet.SpeciesID = reqBody.SpeciesID
 }
 
-func (reqBody *postPetRequestBody) bindPutToPet(pet *models.Pet) {
+func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet) {
 	if reqBody.Name != "" {
 		pet.Name = reqBody.Name
 	}
@@ -102,7 +102,7 @@ func PostPet(c *gin.Context) {
 	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
 	} else {
-		requestBody.bindPostToPet(pet)
+		requestBody.bindToPet(pet)
 		pet.UserID = uint(uid.(int))
 		if len(requestBody.BreedIDs) > 0 {
 			for _, breedId := range requestBody.BreedIDs {
@@ -135,6 +135,7 @@ func PutPet(c *gin.Context) {
 	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
 	} else {
+		requestBody.bindToPet(pet)
 		if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
 			c.JSON(500, err.Error())
 		} else {

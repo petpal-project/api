@@ -69,7 +69,9 @@ func RetrievePets(userId uint, DB *gorm.DB) (pets *[]Pet, err error) {
 
 func UpdatePet(userId uint, petId uint, pet *Pet, DB *gorm.DB) (updatedPet *Pet, err error) {
 	err = DB.Set("user", userId).Set("pet", petId).Model(&pet).Where("id = ?", petId).Updates(&pet).Error
-	updatedPet = pet
+	if err == nil {
+		updatedPet, err = RetrievePet(petId, userId, DB)
+	}
 	return
 }
 
