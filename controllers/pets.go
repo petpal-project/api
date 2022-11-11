@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"pet-pal/api/config"
 	"pet-pal/api/models"
 	"strconv"
@@ -8,6 +9,46 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+type postPetRequestBody struct {
+	Name           string `json:"name"`
+	BreedIDs       []uint `json:"breedIDs"`
+	SpeciesID      uint   `json:"speciesId"`
+	Age            uint   `json:"age"`
+	Images         []uint `json:"imageIDs"`
+	MealIDs        []uint `json:"mealIDs"`
+	MedicationIDs  []uint `json:"medicationIDs"`
+	HealthEventIDs []uint `json:"healthEventIDs"`
+}
+
+type putPetRequestBody struct {
+	Name           string `json:"name"`
+	BreedIDs       []uint `json:"breedIDs"`
+	SpeciesID      uint   `json:"speciesID"`
+	Age            uint   `json:"age"`
+	Images         []uint `json:"imageIDs"`
+	MealIDs        []uint `json:"mealIDs"`
+	MedicationIDs  []uint `json:"medicationIDs"`
+	HealthEventIDs []uint `json:"healthEventIDs"`
+}
+
+func (reqBody *postPetRequestBody) bindPostToPet(pet *models.Pet) {
+	pet.Name = reqBody.Name
+	pet.Age = reqBody.Age
+	pet.SpeciesID = reqBody.SpeciesID
+}
+
+func (reqBody *postPetRequestBody) bindPutToPet(pet *models.Pet) {
+	if reqBody.Name != "" {
+		pet.Name = reqBody.Name
+	}
+	if reqBody.Age != 0 {
+		pet.Age = reqBody.Age
+	}
+	if reqBody.SpeciesID != 0 {
+		pet.SpeciesID = reqBody.SpeciesID
+	}
+}
 
 const idMustBeNumeric = "Pet Id must be numeric"
 const missingUserId = "Missing User ID"
@@ -31,7 +72,6 @@ func GetPet(c *gin.Context) {
 			c.JSON(200, &pet)
 		}
 	}
-
 }
 
 func GetPets(c *gin.Context) {
@@ -52,15 +92,26 @@ func GetPets(c *gin.Context) {
 
 func PostPet(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-	var pet *models.Pet
+	var requestBody *postPetRequestBody
+	var pet *models.Pet = &models.Pet{}
 	var err error
+
 	uid, userExists := c.Get("user")
 	if !userExists {
 		c.JSON(400, missingUserId)
-	} else if err = c.BindJSON(&pet); err != nil {
+	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
 	} else {
+		requestBody.bindPostToPet(pet)
 		pet.UserID = uint(uid.(int))
+		if len(requestBody.BreedIDs) > 0 {
+			for _, breedId := range requestBody.BreedIDs {
+				// Add post to pet_breeds table here
+				// Also populate breeds array with getBreeds function call
+				//var breeds *[]models.Breed
+				fmt.Print(breedId)
+			}
+		}
 		if err = models.CreatePet(pet, DB); err != nil {
 			c.JSON(500, err.Error())
 		} else {
@@ -70,9 +121,10 @@ func PostPet(c *gin.Context) {
 }
 
 func PutPet(c *gin.Context) {
-	var err error
-	var pet *models.Pet
 	var DB *gorm.DB = config.DB
+	var pet *models.Pet = &models.Pet{}
+	var requestBody *putPetRequestBody
+	var err error
 
 	uid, userExists := c.Get("user")
 	pid, err := strconv.Atoi(c.Param("petId"))
@@ -80,12 +132,14 @@ func PutPet(c *gin.Context) {
 		c.JSON(400, missingUserId)
 	} else if err != nil {
 		c.JSON(400, idMustBeNumeric)
-	} else if err = c.BindJSON(&pet); err != nil {
+	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
-	} else if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
-		c.JSON(500, err.Error())
 	} else {
-		c.JSON(201, &pet)
+		if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
+			c.JSON(500, err.Error())
+		} else {
+			c.JSON(201, &pet)
+		}
 	}
 }
 
