@@ -10,12 +10,12 @@ type Breed struct {
 	gorm.Model
 	SpeciesID    uint `json:"speciesId"`
 	Species      Species
-	Name         string  `json:"name"`
+	Name         string  `json:"name"` 
 	Size         string  `json:"size"`
-	HeightMale   float64 `json:"heightMale"`
-	HeightFemale float64 `json:"heightFemale"`
-	WeightMale   float64 `json:"weightMale"`
-	WeightFemale float64 `json:"weightFemale"`
+	HeightMale   string `json:"heightMale"`
+	HeightFemale string `json:"heightFemale"`
+	WeightMale   string `json:"weightMale"`
+	WeightFemale string `json:"weightFemale"`
 	Coat         string  `json:"coat"`
 	CoatDesc     string  `json:"coatDesc"`
 	Colors       string  `json:"colors"`
