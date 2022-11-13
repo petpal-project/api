@@ -75,7 +75,6 @@ func GetPet(c *gin.Context) {
 			c.JSON(500, err.Error())
 		} else {
 			c.JSON(200, &pet)
-			//	}
 		}
 	}
 }
