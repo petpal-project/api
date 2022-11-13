@@ -1,0 +1,363 @@
+openapi: '3.0.2'
+info:
+  title: PetPal API
+  version: '0.1.0'
+
+servers:
+  - url: http://localhost:3000/
+
+tags:
+  - name: Pets
+  - name: Users
+  - name: Species
+  - name: Breeds
+
+paths:
+  /breeds:
+    get:
+      description: ''
+      parameters: []
+      tags:
+        - Breeds
+      responses:
+        '200':
+          description: OK
+  /pets:
+    get:
+      summary: Get all of the user's pets
+      description: ''
+      parameters: []
+      tags:
+        - Pets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                - id: 43
+                  name: 'Brian Griffin'
+                  userId: 0
+                  species:
+                    id: 1
+                    name: Dog
+                    binomialName: Canis Familiaris
+                  breeds:
+                    - id: 114
+                      name: Labrador Retriever
+                      size: Large
+                      heightMale: '22.5-24.5 in.'
+                      heightFemale: '21.5-23.5 in.'
+                      weightMale: '65-80 lbs.'
+                      weightFemale: '55-70 lbs.'
+                      coat: Short
+                      coatDesc: null
+                      colors: null
+                      colorsDesc: null
+                      energy: High
+                      activities: Hey lois
+                  age: 27
+                - id: 44
+                  name: 'Snowball II'
+                  userId: 0
+                  species:
+                    id: 2
+                    name: Cat
+                    binomialName: Felis catus
+                  breeds: null
+                  age: 11
+        '401':
+          description: Unauthorized (No token in request)
+    post:
+      summary: Create a pet
+      description: Create a pet belonging to the currently logged in user
+      tags:
+        - Pets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetForm'
+            example:
+              name: 'Brian Griffin'
+              speciesId: 1
+              breedIds: [114]
+              age: 27
+      responses:
+        '201':
+          description: Created
+          headers:
+            'Location':
+              schema:
+                type: string
+              description: Relative path of the newly created pet object (ex. /api/pets/43/)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 43
+                userId: 0
+                species:
+                  id: 1
+                  name: Dog
+                  binomialName: Canis Familiaris
+                breeds:
+                  - id: 114
+                    name: Labrador Retriever
+                    size: Large
+                    heightMale: '22.5-24.5 in.'
+                    heightFemale: '21.5-23.5 in.'
+                    weightMale: '65-80 lbs.'
+                    weightFemale: '55-70 lbs.'
+                    coat: Short
+                    coatDesc: null
+                    colors: null
+                    colorsDesc: null
+                    energy: High
+                    activities: Hey lois
+                name: 'Brian Griffin'
+                age: 27
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  - message: 'Required: speciesId'
+                  - message: 'Invalid value: age'
+        '401':
+          description: Unauthorized (No token in request)
+  /pets/{petId}:
+    get:
+      summary: "Get one of the user's pets"
+      description: ''
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      tags:
+        - Pets
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                - id: 43
+                  userId: 0
+                  name: 'Brian Griffin'
+                  species:
+                    id: 1
+                    name: Dog
+                    binomialName: Canis Familiaris
+                  breeds:
+                    - id: 114
+                      name: Labrador Retriever
+                      size: Large
+                      heightMale: '22.5-24.5 in.'
+                      heightFemale: '21.5-23.5 in.'
+                      weightMale: '65-80 lbs.'
+                      weightFemale: '55-70 lbs.'
+                      coat: Short
+                      coatDesc: null
+                      colors: null
+                      colorsDesc: null
+                      energy: High
+                      activities: Hey lois
+        '401':
+          description: Unauthorized (No token in request)
+        '403':
+          description: Forbidden (User does not have access to pet)
+    put:
+      summary: 'Update a pet'
+      description: ''
+      tags:
+        - Pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PetForm'
+            example:
+              name: 'Brian Griffin'
+              breedIds:
+                - 144
+              age: 27
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 43
+                userId: 0
+                species:
+                  id: 1
+                  name: Dog
+                  binomialName: Canis Familiaris
+                breeds:
+                  - id: 114
+                    name: Labrador Retriever
+                    size: Large
+                    heightMale: '22.5-24.5 in.'
+                    heightFemale: '21.5-23.5 in.'
+                    weightMale: '65-80 lbs.'
+                    weightFemale: '55-70 lbs.'
+                    coat: Short
+                    coatDesc: null
+                    colors: null
+                    colorsDesc: null
+                    energy: High
+                    activities: Hey lois
+                name: 'Brian Griffin'
+                age: 27
+        '401':
+          description: Unauthorized (No token in request)
+        '403':
+          description: Forbidden (User does not have access to pet)
+    delete:
+      summary: 'Delete a pet'
+      description: ''
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      tags:
+        - Pets
+      responses:
+        '204':
+          description: No Content (successful deletion)
+        '401':
+          description: Unauthorized (No token in request)
+        '403':
+          description: Forbidden (User does not have access to pet)
+  /species:
+    get:
+      description: ''
+      parameters: []
+      tags:
+        - Species
+      responses:
+        '200':
+          description: OK
+  /users:
+    get:
+      description: 'Get information about the currently logged in user'
+      parameters: []
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+    post:
+      description: ''
+      parameters: []
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        userId:
+          type: integer
+        species:
+          $ref: '#/components/schemas/Species'
+        breeds:
+          type: array
+          items:
+            $ref: '#/components/schemas/Breed'
+        age:
+          type: integer
+    PetForm:
+      type: object
+      properties:
+        name:
+          type: string
+        speciesId:
+          type: integer
+        age:
+          type: integer
+        breedIds:
+          type: array
+          items:
+            type: integer
+    Species:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        binomialName:
+          type: string
+    Breed:
+      type: object
+      properties:
+        id:
+          type: integer
+        speciesId:
+          type: integer
+        name:
+          type: string
+        size:
+          type: string
+        heightMale:
+          type: string
+        heightFemale:
+          type: string
+        weightMale:
+          type: string
+        weightFemale:
+          type: string
+        coat:
+          type: string
+        coatDesc:
+          type: string
+        colors:
+          type: string
+        colorsDesc:
+          type: string
+        energy:
+          type: string
+        activities:
+          type: string
+  securitySchemes:
+    name:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
