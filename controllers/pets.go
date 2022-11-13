@@ -32,13 +32,15 @@ type putPetRequestBody struct {
 	HealthEventIDs []uint `json:"healthEventIDs"`
 }
 
-func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet) {
+func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
+	species, _ := models.RetrieveSpecies(reqBody.SpeciesID, DB)
 	pet.Name = reqBody.Name
 	pet.Age = reqBody.Age
 	pet.SpeciesID = reqBody.SpeciesID
+	pet.Species = *species
 }
 
-func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet) {
+func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
 	if reqBody.Name != "" {
 		pet.Name = reqBody.Name
 	}
@@ -47,6 +49,9 @@ func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet) {
 	}
 	if reqBody.SpeciesID != 0 {
 		pet.SpeciesID = reqBody.SpeciesID
+		species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
+		fmt.Print(species)
+		pet.Species = *species
 	}
 }
 
@@ -102,14 +107,13 @@ func PostPet(c *gin.Context) {
 	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
 	} else {
-		requestBody.bindToPet(pet)
+		requestBody.bindToPet(pet, DB)
 		pet.UserID = uint(uid.(int))
 		if len(requestBody.BreedIDs) > 0 {
+			var breed *models.Breed
 			for _, breedId := range requestBody.BreedIDs {
-				// Add post to pet_breeds table here
-				// Also populate breeds array with getBreeds function call
-				//var breeds *[]models.Breed
-				fmt.Print(breedId)
+				breed, _ = models.RetrieveBreed(breedId, DB)
+				pet.Breeds = append(pet.Breeds, *breed)
 			}
 		}
 		if err = models.CreatePet(pet, DB); err != nil {
@@ -135,7 +139,7 @@ func PutPet(c *gin.Context) {
 	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
 	} else {
-		requestBody.bindToPet(pet)
+		requestBody.bindToPet(pet, DB)
 		if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
 			c.JSON(500, err.Error())
 		} else {
