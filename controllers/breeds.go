@@ -11,6 +11,7 @@ import (
 
 func GetBreed(c *gin.Context) {
 	var DB *gorm.DB = config.DB
+	var breed *models.Breed
 	bid, err := strconv.Atoi(c.Param("breedId"))
 
 	if err != nil {
@@ -18,7 +19,7 @@ func GetBreed(c *gin.Context) {
 		c.Abort()
 		return
 	} else {
-		breed, err := models.RetrieveBreed(uint(bid), DB)
+		breed, err = models.RetrieveBreed(uint(bid), DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 		} else {
@@ -29,13 +30,13 @@ func GetBreed(c *gin.Context) {
 
 func GetBreeds(c *gin.Context) {
 	var DB *gorm.DB = config.DB
-
+	var breeds *[]models.Breed
 	sid, err := strconv.Atoi(c.Query("speciesId"))
 
 	if err != nil {
 		c.JSON(400, "speciesId must be numeric")
 	} else {
-		breeds, err := models.RetrieveBreeds(uint(sid), DB)
+		breeds, err = models.RetrieveBreeds(uint(sid), DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 		} else {
