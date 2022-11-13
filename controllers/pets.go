@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"pet-pal/api/config"
 	"pet-pal/api/models"
 	"strconv"
@@ -11,10 +10,10 @@ import (
 )
 
 type postPetRequestBody struct {
-	Name           string `json:"name"`
-	BreedIDs       []uint `json:"breedIDs"`
-	SpeciesID      uint   `json:"speciesId"`
-	Age            uint   `json:"age"`
+	Name           string `json:"name" binding:"required"`
+	BreedIDs       []uint `json:"breedIDs" binding:"required"`
+	SpeciesID      uint   `json:"speciesId" binding:"required"`
+	Age            uint   `json:"age" binding:"required"`
 	Images         []uint `json:"imageIDs"`
 	MealIDs        []uint `json:"mealIDs"`
 	MedicationIDs  []uint `json:"medicationIDs"`
@@ -33,10 +32,12 @@ type putPetRequestBody struct {
 }
 
 func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
-	species, _ := models.RetrieveSpecies(reqBody.SpeciesID, DB)
+
 	pet.Name = reqBody.Name
 	pet.Age = reqBody.Age
+
 	pet.SpeciesID = reqBody.SpeciesID
+	species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
 	pet.Species = *species
 }
 
@@ -50,7 +51,6 @@ func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
 	if reqBody.SpeciesID != 0 {
 		pet.SpeciesID = reqBody.SpeciesID
 		species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
-		fmt.Print(species)
 		pet.Species = *species
 	}
 }
@@ -75,6 +75,7 @@ func GetPet(c *gin.Context) {
 			c.JSON(500, err.Error())
 		} else {
 			c.JSON(200, &pet)
+			//	}
 		}
 	}
 }

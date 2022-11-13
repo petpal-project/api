@@ -58,12 +58,12 @@ func CreatePet(pet *Pet, DB *gorm.DB) (err error) {
 }
 
 func RetrievePet(petId uint, userId uint, DB *gorm.DB) (pet *Pet, err error) {
-	err = DB.First(&pet, "id = ? AND user_id = ?", petId, userId).Error
+	err = DB.Preload("Breeds").Preload("Species").First(&pet, "id = ? AND user_id = ?", petId, userId).Error
 	return
 }
 
 func RetrievePets(userId uint, DB *gorm.DB) (pets *[]Pet, err error) {
-	err = DB.Find(&pets, "user_id = ?", userId).Error
+	err = DB.Preload("Breeds").Preload("Species").Find(&pets, "user_id = ?", userId).Error
 	return
 }
 
