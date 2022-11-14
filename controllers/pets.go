@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"pet-pal/api/config"
 	"pet-pal/api/models"
 	"strconv"
@@ -32,27 +33,48 @@ type putPetRequestBody struct {
 }
 
 func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
-
 	pet.Name = reqBody.Name
 	pet.Age = reqBody.Age
-
 	pet.SpeciesID = reqBody.SpeciesID
 	species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
 	pet.Species = *species
 }
 
-func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
+func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) (err error) {
+	var empty bool = true
 	if reqBody.Name != "" {
 		pet.Name = reqBody.Name
+		empty = false
 	}
 	if reqBody.Age != 0 {
 		pet.Age = reqBody.Age
+		empty = false
 	}
 	if reqBody.SpeciesID != 0 {
 		pet.SpeciesID = reqBody.SpeciesID
 		species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
 		pet.Species = *species
+		empty = false
 	}
+	if len(reqBody.BreedIDs) != 0 {
+		empty = false
+	}
+	if len(reqBody.Images) != 0 {
+		empty = false
+	}
+	if len(reqBody.MedicationIDs) != 0 {
+		empty = false
+	}
+	if len(reqBody.MealIDs) != 0 {
+		empty = false
+	}
+	if len(reqBody.HealthEventIDs) != 0 {
+		empty = false
+	}
+	if empty {
+		err = errors.New("cannot have empty request body for method PUT")
+	}
+	return
 }
 
 const idMustBeNumeric = "Pet Id must be numeric"
@@ -85,7 +107,9 @@ func GetPets(c *gin.Context) {
 	var err error
 
 	uid, userExists := c.Get("user")
-	if userExists {
+	if !userExists {
+		c.JSON(400, missingUserId)
+	} else {
 		pets, err = models.RetrievePets(uint(uid.(int)), DB)
 		if err != nil {
 			c.JSON(500, err.Error())
@@ -132,15 +156,18 @@ func PutPet(c *gin.Context) {
 
 	uid, userExists := c.Get("user")
 	pid, err := strconv.Atoi(c.Param("petId"))
+
 	if !userExists {
 		c.JSON(400, missingUserId)
 	} else if err != nil {
 		c.JSON(400, idMustBeNumeric)
 	} else if err = c.BindJSON(&requestBody); err != nil {
 		c.JSON(400, err.Error())
+	} else if err = requestBody.bindToPet(pet, DB); err != nil {
+		c.JSON(400, err.Error())
 	} else {
-		requestBody.bindToPet(pet, DB)
-		if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
+		pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB)
+		if err != nil {
 			c.JSON(500, err.Error())
 		} else {
 			c.JSON(201, &pet)
@@ -153,17 +180,14 @@ func DeletePet(c *gin.Context) {
 
 	uid, userExists := c.Get("user")
 	pid, err := strconv.Atoi(c.Param("petId"))
+
 	if err != nil {
 		c.JSON(400, idMustBeNumeric)
-	}
-	if userExists {
-		err = models.DeletePet(uint(pid), uint(uid.(int)), DB)
-		if err != nil {
-			c.JSON(500, err.Error())
-		} else {
-			c.Status(204)
-		}
-	} else {
+	} else if !userExists {
 		c.JSON(400, missingUserId)
+	} else if err = models.DeletePet(uint(pid), uint(uid.(int)), DB); err != nil {
+		c.JSON(500, err.Error())
+	} else {
+		c.Status(204)
 	}
 }
