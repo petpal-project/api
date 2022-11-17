@@ -8,7 +8,7 @@ type Medicine struct {
 }
 
 func GetMedicine(medId uint, DB *gorm.DB) (med *Medicine, err error) {
-	err = DB.First(&Medicine{}, "id =  ?", medId).Error
+	err = DB.First(&med, "id =  ?", medId).Error
 	return
 }
 
