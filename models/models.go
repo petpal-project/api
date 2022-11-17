@@ -13,13 +13,6 @@ type Meal struct {
 	Food      []Food `gorm:"many2many:meal_foods;"`
 }
 
-type Food struct {
-	gorm.Model
-	Category    string
-	TargetAge   uint
-	Description string
-}
-
 type Medication struct {
 	gorm.Model
 	PetID      uint
