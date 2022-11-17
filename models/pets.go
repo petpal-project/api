@@ -24,6 +24,7 @@ func (pet *Pet) BeforeUpdate(DB *gorm.DB) (err error) {
 	var petInDB *Pet
 	uid, userExists := DB.Get("user")
 	pid, petExists := DB.Get("pet")
+
 	if !userExists {
 		err = errors.New("missing user id")
 	} else if !petExists {
@@ -68,8 +69,17 @@ func RetrievePets(userId uint, DB *gorm.DB) (pets *[]Pet, err error) {
 }
 
 func UpdatePet(userId uint, petId uint, pet *Pet, DB *gorm.DB) (updatedPet *Pet, err error) {
-	err = DB.Set("user", userId).Set("pet", petId).Model(&pet).Where("id = ?", petId).Updates(&pet).Error
-	if err == nil {
+	if len(pet.Breeds) > 0 {
+		// I cannot for the life of me figure out a better way to do this, but this works so
+		// I will no longer be touching it. Have fun trying to refactor this but I have spent hours
+		// stumbling around in the dark because there exist like 2 SE posts about this and they are all years old
+		var breeds []Breed = pet.Breeds
+		DB.Preload("Breeds").Model(&pet).Association("Breeds").Clear()
+		DB.Preload("Breeds").Model(&pet).Association("Breeds").Replace(breeds)
+	}
+	if err = DB.Set("user", userId).Set("pet", petId).Model(&pet).Updates(&pet).Error; err != nil {
+		return
+	} else {
 		updatedPet, err = RetrievePet(petId, userId, DB)
 	}
 	return

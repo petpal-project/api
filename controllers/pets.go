@@ -38,6 +38,13 @@ func (reqBody *postPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) {
 	pet.SpeciesID = reqBody.SpeciesID
 	species, _ := models.RetrieveSpecies(pet.SpeciesID, DB)
 	pet.Species = *species
+	if len(reqBody.BreedIDs) > 0 {
+		var breed *models.Breed
+		for _, breedId := range reqBody.BreedIDs {
+			breed, _ = models.RetrieveBreed(breedId, DB)
+			pet.Breeds = append(pet.Breeds, *breed)
+		}
+	}
 }
 
 func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) (err error) {
@@ -57,6 +64,11 @@ func (reqBody *putPetRequestBody) bindToPet(pet *models.Pet, DB *gorm.DB) (err e
 		empty = false
 	}
 	if len(reqBody.BreedIDs) != 0 {
+		var breed *models.Breed
+		for _, breedId := range reqBody.BreedIDs {
+			breed, _ = models.RetrieveBreed(breedId, DB)
+			pet.Breeds = append(pet.Breeds, *breed)
+		}
 		empty = false
 	}
 	if len(reqBody.Images) != 0 {
@@ -133,13 +145,7 @@ func PostPet(c *gin.Context) {
 	} else {
 		requestBody.bindToPet(pet, DB)
 		pet.UserID = uint(uid.(int))
-		if len(requestBody.BreedIDs) > 0 {
-			var breed *models.Breed
-			for _, breedId := range requestBody.BreedIDs {
-				breed, _ = models.RetrieveBreed(breedId, DB)
-				pet.Breeds = append(pet.Breeds, *breed)
-			}
-		}
+
 		if err = models.CreatePet(pet, DB); err != nil {
 			c.JSON(500, err.Error())
 		} else {
@@ -166,7 +172,9 @@ func PutPet(c *gin.Context) {
 	} else if err = requestBody.bindToPet(pet, DB); err != nil {
 		c.JSON(400, err.Error())
 	} else {
-		pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB)
+		pet.UserID = uint(uid.(int))
+		pet.ID = uint(pid)
+		pet, err = models.UpdatePet(pet.UserID, pet.ID, pet, DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 		} else {
