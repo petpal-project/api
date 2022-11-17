@@ -4,7 +4,8 @@ import "gorm.io/gorm"
 
 type Medicine struct {
 	gorm.Model
-	Description string
+	Description   string
+	TargetSpecies uint
 }
 
 func GetMedicine(medId uint, DB *gorm.DB) (med *Medicine, err error) {
@@ -12,7 +13,7 @@ func GetMedicine(medId uint, DB *gorm.DB) (med *Medicine, err error) {
 	return
 }
 
-func GetMedicines(DB *gorm.DB) (meds *[]Medicine, err error) {
-	err = DB.Find(&meds).Error
+func GetMedicines(speciesId uint, DB *gorm.DB) (meds *[]Medicine, err error) {
+	err = DB.Find(&meds, "target_species = ?", speciesId).Error
 	return
 }
