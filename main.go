@@ -90,6 +90,13 @@ func main() {
 			healthEvents.POST("/")
 			healthEvents.DELETE("/:healthEventsId")
 		}
+		var images *gin.RouterGroup = api.Group("/images")
+		{
+			images.GET("/pets/:petId", controllers.GetImagesByPet)
+			images.GET("/users", controllers.GetImagesByUser)
+			images.POST("/", controllers.PostImage)
+			images.DELETE("/:imageId", controllers.DeleteImage)
+		}
 	}
 
 	r.Run(":3000")
