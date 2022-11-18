@@ -30,10 +30,3 @@ type HealthEvent struct {
 	Category    string
 	Description string
 }
-
-type Image struct {
-	gorm.Model
-	PetID       uint
-	AssetUrl    string
-	Description string
-}
