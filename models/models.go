@@ -13,13 +13,6 @@ type Meal struct {
 	Food      []Food `gorm:"many2many:meal_foods;"`
 }
 
-type Food struct {
-	gorm.Model
-	Category    string
-	TargetAge   uint
-	Description string
-}
-
 type Medication struct {
 	gorm.Model
 	PetID      uint
@@ -28,11 +21,6 @@ type Medication struct {
 	EndDate    time.Time
 	MedicineID uint
 	Medicine   Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-}
-
-type Medicine struct {
-	gorm.Model
-	Description string
 }
 
 type HealthEvent struct {

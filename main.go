@@ -55,13 +55,13 @@ func main() {
 		}
 		var foods *gin.RouterGroup = api.Group("/foods")
 		{
-			foods.GET("/:foodId")
-			foods.GET("/")
+			foods.GET("/:foodId", controllers.GetFood)
+			foods.GET("/", controllers.GetFoods)
 		}
 		var medicines *gin.RouterGroup = api.Group("/medicines")
 		{
-			medicines.GET("/:medicineId")
-			medicines.GET("/")
+			medicines.GET("/:medicineId", controllers.GetMedicine)
+			medicines.GET("/", controllers.GetMedicines)
 		}
 		// for these two groups, could we want to have a new router group like
 		// petMeals = *gin.RouterGroup = api.Group("/:mealId") ?
