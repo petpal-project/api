@@ -25,4 +25,3 @@ To see the UI for the OApi Documentation
 1. Download the [OpenAPI (Swagger) Editor for VSCode](https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi)
 2. Select the following from the Command Palette
    `OpenAPI: show preview using Swagger UI`
-...
