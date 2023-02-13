@@ -30,4 +30,4 @@ jobs:
         uses: Ilshidur/action-discord@0.3.2
         with:
           # The message to display in the Discord message.
-          args: '${{ EVENT_PAYLOAD.repository.full_name }} source code has been uploaded to S3.'
+          args: '${{ EVENT_PAYLOAD.repository.full_name }} source code has been uploaded to S3...'
