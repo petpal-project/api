@@ -1,0 +1,64 @@
+#%RAML 1.0
+title: Pet Pal API
+baseUri: http://localhost:3000/api
+version: 1.0
+
+types:
+  pet: |
+    {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-03/schema",
+      "id": "http://jsonschema.net",
+      "required": true,
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "speciesId": {
+          "type": "int",
+          "required": true,
+        },
+        "age": {
+          "type": "int",
+          "required": false,
+        }
+      }
+    }
+/users:
+  /{userId}:
+/pets:
+  post: 
+    description: Create a pet with authorized user's userId
+    body:
+      application/json:
+        type: pet
+        example: |
+          {
+            "name": "Brian Griffin",
+            "speciesId": 1,
+            "age": 37
+          }
+  /{petId}:
+    delete:
+      description: Delete a pet
+      
+    /breeds:
+      /{breedId}:
+    /meals:
+      /{mealId}:
+    /medications:
+      /{medicationId}:
+    /healthevents:
+      /{healtheventsId}:
+    /images:
+      /{imageId}:
+/species:
+  /{speciesId}:
+/breeds:
+  /{breedId}:  
+/foods:
+  /{foodId}:
+/medicines:
+  /{medicineId}:
+

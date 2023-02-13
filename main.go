@@ -6,6 +6,7 @@ import (
 	"pet-pal/api/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerMiddleware "github.com/go-openapi/runtime/middleware"
 )
 
 func pingHandler(c *gin.Context) {
@@ -21,6 +22,10 @@ func main() {
 	var r *gin.Engine = gin.Default()
 	r.GET("/ping", pingHandler)
 
+	opts := swaggerMiddleware.SwaggerUIOpts{SpecURL: "docs/openapi.yml"}
+	sh := swaggerMiddleware.SwaggerUI(opts, nil)
+	r.GET("/docs/*any", gin.WrapH(sh))
+
 	var api *gin.RouterGroup = r.Group("/api")
 	{
 		// api.Use(middleware.TokenAuth(authClient, DB))
@@ -33,28 +38,57 @@ func main() {
 		}
 		var pets *gin.RouterGroup = api.Group("/pets")
 		{
-			pets.GET("/", controllers.GetPet)
+			pets.GET("/", controllers.GetPets)
+			pets.GET("/:petId", controllers.GetPet)
 			pets.POST("/", controllers.PostPet)
+			pets.PUT("/:petId", controllers.PutPet)
+			pets.DELETE("/:petId", controllers.DeletePet)
 		}
 		var species *gin.RouterGroup = api.Group("/species")
 		{
-			species.GET("/")
-			species.POST("/")
+			species.GET("/:speciesId", controllers.GetSpecies)
 		}
 		var breeds *gin.RouterGroup = api.Group("/breeds")
 		{
-			breeds.GET("/")
-			breeds.POST("/")
+			breeds.GET("/", controllers.GetBreeds)
+			breeds.GET("/:breedId", controllers.GetBreed)
 		}
 		var foods *gin.RouterGroup = api.Group("/foods")
 		{
-			foods.GET("/")
-			foods.POST("/")
+			foods.GET("/:foodId", controllers.GetFood)
+			foods.GET("/", controllers.GetFoods)
 		}
 		var medicines *gin.RouterGroup = api.Group("/medicines")
 		{
-			medicines.GET("/")
-			medicines.POST("/")
+			medicines.GET("/:medicineId", controllers.GetMedicine)
+			medicines.GET("/", controllers.GetMedicines)
+		}
+		// for these two groups, could we want to have a new router group like
+		// petMeals = *gin.RouterGroup = api.Group("/:mealId") ?
+		var meals *gin.RouterGroup = api.Group("/meals")
+		{
+			meals.GET("/:mealId")
+			meals.GET("/pet/:petId")
+			meals.PUT("/:mealId")
+			meals.POST("/")
+			meals.DELETE("/:mealId")
+
+		}
+		var medications *gin.RouterGroup = api.Group("/medications")
+		{
+			medications.GET("/:medicationId")
+			medications.GET("/pets/:petId")
+			medications.PUT("/:medicationId")
+			medications.POST("/")
+			medications.DELETE("/:medicationId")
+		}
+		var healthEvents *gin.RouterGroup = api.Group("/healthEvents")
+		{
+			healthEvents.GET("/:healthEventsId")
+			healthEvents.GET("/pets/:petId")
+			healthEvents.PUT("/:healthEventsId")
+			healthEvents.POST("/")
+			healthEvents.DELETE("/:healthEventsId")
 		}
 	}
 
