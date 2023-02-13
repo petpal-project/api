@@ -24,10 +24,12 @@ jobs:
       - name: Upload to S3 bucket
         run: aws s3 cp api_source_code.zip s3://petpal-api-source-code
         
-      - name: Actions for Discord
+      - name: Notify Discord
+        # You may pin to the exact commit or the version.
+        # uses: th0th/notify-discord@fda1438555e7291c8771107fa28654119606e679
+        uses: th0th/notify-discord@v0.4.1
         env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        uses: Ilshidur/action-discord@0.3.2
-        with:
-          # The message to display in the Discord message.
-          args: '${{ EVENT_PAYLOAD.repository.full_name }} source code has been uploaded to S3.'
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_JOB_NAME: "Deploy to S3"
+          GITHUB_JOB_STATUS: ${{ job.status }}
