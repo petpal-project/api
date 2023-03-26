@@ -17,7 +17,7 @@ and to run the network:
 ```
 docker compose up -d
 ```
-The API will be available at `localhost:3000`, and the Postgres DB on port `localhost:5432`
+The API will be available at `localhost:3000`, and the Postgres DB at `localhost:5432`
 
 When finished:
 ```
