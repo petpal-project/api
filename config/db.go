@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	api "pet-pal/api/models"
@@ -15,6 +16,8 @@ func migrate() {
 	err := DB.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.Event{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
 	if err != nil {
 		log.Fatalf("An error occured while performing auto-migration: %v\n", err)
+	} else {
+		fmt.Println("Successfully ran automigration")
 	}
 }
 

@@ -4,18 +4,25 @@ Backend API server for the PetPal project written in Go. Uses Gin framework.
 
 ## Running locally
 
-Download a Google Service Account key from the PetPal firebase console, and set the path in your environment
-
+Local development environment consists of a docker container network with a Postgres DB instance and the API.
+Create a .env file from the template:
 ```
-export GOOGLE_APPLICATION_CREDENTIALS=relative/path/to/key.json
-export DB_HOST=<db-host>
-export DB_PORT=<db-port>
-export DB_NAME=<db-name>
-export DB_USER=<db-username>
-export DB_PASS=<db-password>
-go run .
+cp .env-template .env
 ```
+And then populate it. To build the images:
+```
+docker build
+```
+and to run the network:
+```
+docker compose up -d
+```
+The API will be available at `localhost:3000`, and the Postgres DB at `localhost:5432`
 
+When finished:
+```
+docker compose down
+```
 ## Viewing The Docs
 
 SwaggerUI endpoint coming soon

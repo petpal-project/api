@@ -9,6 +9,7 @@
 *.dll
 *.so
 *.dylib
+api
 
 # Test binary, built with `go test -c`
 *.test
@@ -32,3 +33,5 @@ go.work
 env.bat
 *.key.json
 *.cmd
+
+/postgres-data
