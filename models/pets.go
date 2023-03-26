@@ -8,16 +8,16 @@ import (
 
 type Pet struct {
 	gorm.Model
-	UserID       uint          `json:"userId"`
-	Name         string        `json:"name"`
-	Breeds       []Breed       `gorm:"many2many:pet_breeds;"`
-	SpeciesID    uint          `json:"speciesId"`
-	Species      Species       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Age          uint          `json:"age"`
-	Images       []Image       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Meals        []Meal        `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Medications  []Medication  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	HealthEvents []HealthEvent `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserID      uint         `json:"userId"`
+	Name        string       `json:"name"`
+	Breeds      []Breed      `gorm:"many2many:pet_breeds;"`
+	SpeciesID   uint         `json:"speciesId"`
+	Species     Species      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Age         uint         `json:"age"`
+	Images      []Image      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Meals       []Meal       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Medications []Medication `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Events      []Event      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (pet *Pet) BeforeUpdate(DB *gorm.DB) (err error) {

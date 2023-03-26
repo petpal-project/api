@@ -15,20 +15,20 @@ type Meal struct {
 
 type Medication struct {
 	gorm.Model
-	PetID      uint
-	Frequency  uint
-	StartDate  time.Time
-	EndDate    time.Time
-	MedicineID uint
-	Medicine   Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	PetID     uint
+	Frequency uint
+	StartDate time.Time
+	EndDate   time.Time
+	Medicine  []Medicine `gorm:"many2many:medication_medicines"`
 }
 
-type HealthEvent struct {
+type Event struct {
 	gorm.Model
 	PetID       uint
 	Name        string
 	Category    string
 	Description string
+	EventDate   time.Time
 }
 
 type Image struct {

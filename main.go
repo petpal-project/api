@@ -82,13 +82,13 @@ func main() {
 			medications.POST("/")
 			medications.DELETE("/:medicationId")
 		}
-		var healthEvents *gin.RouterGroup = api.Group("/healthEvents")
+		var events *gin.RouterGroup = api.Group("/events")
 		{
-			healthEvents.GET("/:healthEventsId")
-			healthEvents.GET("/pets/:petId")
-			healthEvents.PUT("/:healthEventsId")
-			healthEvents.POST("/")
-			healthEvents.DELETE("/:healthEventsId")
+			events.GET("/:eventsId")
+			events.GET("/pets/:petId")
+			events.PUT("/:eventsId")
+			events.POST("/")
+			events.DELETE("/:eventsId")
 		}
 	}
 

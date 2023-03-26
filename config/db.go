@@ -12,7 +12,7 @@ import (
 var DB *gorm.DB
 
 func migrate() {
-	err := DB.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.HealthEvent{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
+	err := DB.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.Event{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
 	if err != nil {
 		log.Fatalf("An error occured while performing auto-migration: %v\n", err)
 	}
