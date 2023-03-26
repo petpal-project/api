@@ -23,12 +23,13 @@ type Medication struct {
 	Medicine   Medicine `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
-type HealthEvent struct {
+type Event struct {
 	gorm.Model
 	PetID       uint
 	Name        string
 	Category    string
 	Description string
+	EventDate   time.Time
 }
 
 type Image struct {
