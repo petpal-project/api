@@ -30,10 +30,3 @@ type Event struct {
 	Description string
 	EventDate   time.Time
 }
-
-type Image struct {
-	gorm.Model
-	PetID       uint
-	AssetUrl    string
-	Description string
-}
