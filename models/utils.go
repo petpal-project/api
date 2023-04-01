@@ -34,7 +34,7 @@ func checkOwnership[T OwnedObject](key string, DB *gorm.DB) error {
 	}
 	fmt.Printf("returned RecordID: %d \n", emptyStruct.GetUserID())
 	returnedRecordId := emptyStruct.GetUserID()
-	if returnedRecordId != uint(userId.(int)) {
+	if returnedRecordId != userId {
 		return errors.New("requested record does not belong to user")
 	}
 	return nil
