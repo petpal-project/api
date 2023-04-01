@@ -84,11 +84,10 @@ func main() {
 		}
 		var events *gin.RouterGroup = api.Group("/events")
 		{
-			events.GET("/:eventsId")
-			events.GET("/pets/:petId")
-			events.PUT("/:eventsId")
-			events.POST("/")
-			events.DELETE("/:eventsId")
+			events.GET("/", controllers.GetEvents)
+			events.POST("/", controllers.PostEvent)
+			events.PUT("/:eventId", controllers.PutEvent)
+			events.DELETE("/:eventId", controllers.DeleteEvent)
 		}
 		var images *gin.RouterGroup = api.Group("/images")
 		{
