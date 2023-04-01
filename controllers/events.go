@@ -86,7 +86,7 @@ func DeleteEvent(c *gin.Context) {
 		c.JSON(400, idMustBeNumeric)
 		return
 	}
-	if err = models.DeleteEvent(uint(userId.(uint)), uint(eventId), DB); err != nil {
+	if err = models.DeleteEvent(uint(userId.(int)), uint(eventId), DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
