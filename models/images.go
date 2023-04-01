@@ -14,6 +14,8 @@ type Image struct {
 	Description string `json:"description" binding:"required"`
 }
 
+func (image Image) GetUserID() uint { return image.UserID }
+
 func (image *Image) BeforeDelete(DB *gorm.DB) (err error) {
 	var imageInDB *Image
 	userId, userExists := DB.Get("userId")

@@ -21,12 +21,3 @@ type Medication struct {
 	EndDate   time.Time
 	Medicine  []Medicine `gorm:"many2many:medication_medicines"`
 }
-
-type Event struct {
-	gorm.Model
-	PetID       uint
-	Name        string
-	Category    string
-	Description string
-	EventDate   time.Time
-}
