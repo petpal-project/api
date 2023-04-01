@@ -8,12 +8,12 @@ import (
 
 type Event struct {
 	gorm.Model
-	PetID       uint
-	UserID      uint
-	Name        string
-	Category    string
-	Description string
-	EventDate   time.Time
+	PetID       uint      `json:"petId" binding:"required"`
+	UserID      uint      `json:"userId" binding:"required"`
+	Name        string    `json:"name" binding:"required"`
+	Category    string    `json:"category"`
+	Description string    `json:"description"`
+	EventDate   time.Time `json:"date"`
 }
 
 func (event Event) GetUserID() uint { return event.UserID }

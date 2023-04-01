@@ -26,7 +26,7 @@ func GetEvents(c *gin.Context) {
 
 func PostEvent(c *gin.Context) {
 	DB := config.DB
-	var event *models.Event
+	var event *models.Event = &models.Event{}
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
 
 	event.UserID = uint(userId.(int))
@@ -49,7 +49,7 @@ func PostEvent(c *gin.Context) {
 
 func PutEvent(c *gin.Context) {
 	DB := config.DB
-	var event *models.Event
+	var event *models.Event = &models.Event{}
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
 	eventId, err := strconv.Atoi(c.Param("eventId"))
 
