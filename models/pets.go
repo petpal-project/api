@@ -20,6 +20,8 @@ type Pet struct {
 	Events      []Event      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
+func (pet Pet) GetUserID() uint { return pet.UserID }
+
 func (pet *Pet) BeforeUpdate(DB *gorm.DB) (err error) {
 	var petInDB *Pet
 	uid, userExists := DB.Get("user")

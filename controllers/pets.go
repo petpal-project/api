@@ -9,9 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const idMustBeNumeric = "Pet Id must be numeric"
-const missingUserId = "Missing User ID"
-
 func GetPet(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	var pet *models.Pet
