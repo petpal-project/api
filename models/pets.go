@@ -20,11 +20,17 @@ type Pet struct {
 
 func (pet Pet) GetUserID() uint { return pet.UserID }
 
-func (pet *Pet) BeforeUpdate(DB *gorm.DB) error { return checkOwnership[Pet]("pet", DB) }
+func (pet *Pet) BeforeUpdate(DB *gorm.DB) error {
+	return checkOwnership[Pet]("pet", DB)
+}
 
-func (pet *Pet) BeforeDelete(DB *gorm.DB) error { return checkOwnership[Pet]("pet", DB) }
+func (pet *Pet) BeforeDelete(DB *gorm.DB) error {
+	return checkOwnership[Pet]("pet", DB)
+}
 
-func CreatePet(pet *Pet, DB *gorm.DB) error { return DB.Create(&pet).Error }
+func CreatePet(pet *Pet, DB *gorm.DB) error {
+	return DB.Create(&pet).Error
+}
 
 func RetrievePet(petId uint, userId uint, DB *gorm.DB) (*Pet, error) {
 	var pet *Pet
