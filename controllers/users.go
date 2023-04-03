@@ -21,14 +21,16 @@ func PostUser(c *gin.Context) {
 	var user *models.User
 
 	if err := c.BindJSON(&user); err != nil {
+		c.JSON(400, err.Error())
 		return
 	}
-	err := models.CreateUser(user, DB)
-	if err != nil {
-		c.JSON(500, "Internal Server Error")
-	} else {
-		c.JSON(200, fmt.Sprintf("User with ID %d Created", user.ID))
+
+	if err := models.CreateUser(user, DB); err != nil {
+		c.JSON(500, err.Error())
+		return
 	}
+
+	c.JSON(200, fmt.Sprintf("User with ID %d Created", user.ID))
 }
 
 func GetUser(c *gin.Context) {
@@ -37,30 +39,30 @@ func GetUser(c *gin.Context) {
 	var err error
 
 	userId, exists := c.Get("user")
-	if exists {
-		user, err = models.RetrieveUser(uint(userId.(int)), DB)
-		if err != nil {
-			c.JSON(500, "Internal Server Error")
-		} else {
-			c.JSON(200, &user)
-		}
-	} else {
-		c.JSON(400, "Missing User ID in Authorization Header")
+	if !exists {
+		c.JSON(400, missingUserId)
+		return
 	}
+
+	user, err = models.RetrieveUser(uint(userId.(int)), DB)
+	if err != nil {
+		c.JSON(500, err.Error())
+	}
+
+	c.JSON(200, &user)
 }
 
 func DeleteUser(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 	userId, exists := c.Get("user")
 
-	if exists {
-		err := models.DeleteUser(uint(userId.(int)), DB)
-		if err != nil {
-			c.JSON(500, "Internal Server Error")
-		} else {
-			c.JSON(200, gin.H{"success": "user deleted"})
-		}
-	} else {
-		c.JSON(400, gin.H{"error": "No User ID in request"})
+	if !exists {
+		c.JSON(400, missingUserId)
+		return
 	}
+	if err := models.DeleteUser(uint(userId.(int)), DB); err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+	c.Status(204)
 }
