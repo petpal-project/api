@@ -15,3 +15,7 @@ func RetrieveMultipleRecords[T struct{}](userId uint, DB *gorm.DB) (*[]T, error)
 	err := DB.Find(&records, "user_id = ?", userId).Error
 	return records, err
 }
+
+func CreateRecord[T struct{}](record T, DB *gorm.DB) error {
+	return DB.Create(&record).Error
+}
