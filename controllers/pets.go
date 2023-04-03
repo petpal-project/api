@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"pet-pal/api/config"
+	"pet-pal/api/datasources"
 	"pet-pal/api/models"
 	"strconv"
 
@@ -58,7 +59,7 @@ func PostPet(c *gin.Context) {
 		c.JSON(400, err.Error())
 	} else {
 		pet.UserID = uint(uid.(int))
-		if err = models.CreatePet(pet, DB); err != nil {
+		if err = datasources.CreateRecord(*pet, DB); err != nil {
 			c.JSON(500, err.Error())
 		} else {
 			c.JSON(200, &pet)

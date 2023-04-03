@@ -22,6 +22,8 @@ type Pet struct {
 
 func (pet Pet) GetUserID() uint { return pet.UserID }
 
+func (pet Pet) GetID() uint { return pet.ID }
+
 func (pet *Pet) BeforeUpdate(DB *gorm.DB) (err error) {
 	var petInDB *Pet
 	uid, userExists := DB.Get("user")
