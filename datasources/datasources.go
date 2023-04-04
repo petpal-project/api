@@ -27,7 +27,13 @@ func CreateRecord[T QueryableStruct](record T, DB *gorm.DB) error {
 	return DB.Create(&record).Error
 }
 
+// Unsure how to make BeforeDelete and BeforeUpdate hooks work
 func UpdateRecord[T QueryableStruct](userID uint, record T, DB *gorm.DB) (T, error) {
-	err := DB.Set("user", userID).Set("struct", record.GetID()).Delete(&record, "id = ?", record.GetID()).Error
+	err := DB.Set("user", userID).Set("struct", record.GetID()).Model(&record).Where("id = ?", record.GetID()).Updates(&record).Error
 	return record, err
+}
+
+func DeleteRecord[T QueryableStruct](structId uint, userId uint, DB *gorm.DB) error {
+	var record T
+	return DB.Set("user", userId).Set("struct", structId).Delete(record, "id = ?", record.GetID()).Error
 }

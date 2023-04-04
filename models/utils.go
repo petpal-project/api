@@ -16,7 +16,7 @@ type OwnedObject interface {
 	GetUserID() uint
 }
 
-func checkOwnership[T OwnedObject](key string, DB *gorm.DB) error {
+func CheckOwnership[T OwnedObject](key string, DB *gorm.DB) error {
 	var emptyStruct T
 
 	userId, userExists := DB.Get(GORM_CONTEXT_USER_KEY)
