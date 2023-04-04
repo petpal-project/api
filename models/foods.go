@@ -10,6 +10,8 @@ type Food struct {
 	TargetSpecies uint
 }
 
+func (food Food) GetID() uint { return food.ID }
+
 func RetrieveFood(foodId uint, DB *gorm.DB) (food *Food, err error) {
 	err = DB.Find(&food, "id = ?", foodId).Error
 	return

@@ -15,6 +15,7 @@ type Image struct {
 }
 
 func (image Image) GetUserID() uint { return image.UserID }
+func (image Image) GetID() uint     { return image.ID }
 
 func (image *Image) BeforeDelete(DB *gorm.DB) (err error) {
 	var imageInDB *Image

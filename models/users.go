@@ -12,6 +12,8 @@ type User struct {
 	Pets      []Pet  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
+func (user User) GetID() uint { return user.ID }
+
 func GetUserIdFromFirebaseId(tokenUID string, DB *gorm.DB) (uint, error) {
 	var user User
 	var err error = DB.Where("accountID = ?", tokenUID).First(&user).Error

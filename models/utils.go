@@ -14,6 +14,7 @@ const GORM_CONTEXT_MISSING_OBJECT = "missing object id"
 type OwnedObject interface {
 	Pet | Image | Event | Meal | Medication
 	GetUserID() uint
+	GetID() uint
 }
 
 func CheckOwnership[T OwnedObject](key string, DB *gorm.DB) error {
@@ -32,7 +33,6 @@ func CheckOwnership[T OwnedObject](key string, DB *gorm.DB) error {
 	if err := DB.Where("id = ?", id).Select("user_id").Find(&emptyStruct).Error; err != nil {
 		return err
 	}
-	fmt.Printf("returned RecordID: %d \n", emptyStruct.GetUserID())
 	returnedRecordId := emptyStruct.GetUserID()
 	if returnedRecordId != userId {
 		return errors.New("requested record does not belong to user")

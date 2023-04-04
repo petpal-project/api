@@ -8,6 +8,8 @@ type Medicine struct {
 	TargetSpecies uint
 }
 
+func (medicine Medicine) GetID() uint { return medicine.ID }
+
 func GetMedicine(medId uint, DB *gorm.DB) (med *Medicine, err error) {
 	err = DB.First(&med, "id =  ?", medId).Error
 	return
