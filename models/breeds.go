@@ -22,12 +22,14 @@ type Breed struct {
 
 func (breed Breed) GetID() uint { return breed.ID }
 
-func RetrieveBreeds(speciesId uint, DB *gorm.DB) (breeds *[]Breed, err error) {
-	err = DB.Model(&Breed{}).Find(&breeds, "species_id = ?", speciesId).Error
-	return
+func RetrieveBreeds(speciesId uint, DB *gorm.DB) (*[]Breed, error) {
+	var breeds *[]Breed
+	err := DB.Model(&Breed{}).Find(&breeds, "species_id = ?", speciesId).Error
+	return breeds, err
 }
 
-func RetrieveBreed(breedId uint, DB *gorm.DB) (breed *Breed, err error) {
-	err = DB.Model(&Breed{}).First(&breed, "id = ?", breedId).Error
-	return
+func RetrieveBreed(breedId uint, DB *gorm.DB) (*Breed, error) {
+	var breed *Breed
+	err := DB.Model(&Breed{}).First(&breed, "id = ?", breedId).Error
+	return breed, err
 }

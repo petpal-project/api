@@ -17,11 +17,13 @@ func GetSpecies(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, "Species ID must be numeric")
-	} else {
-		if species, err = models.RetrieveSpecies(uint(sid), DB); err != nil {
-			c.JSON(500, "Internal Server Error")
-		} else {
-			c.JSON(200, species)
-		}
+		return
 	}
+
+	if species, err = models.RetrieveSpecies(uint(sid), DB); err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	c.JSON(200, species)
 }

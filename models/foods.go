@@ -12,12 +12,14 @@ type Food struct {
 
 func (food Food) GetID() uint { return food.ID }
 
-func RetrieveFood(foodId uint, DB *gorm.DB) (food *Food, err error) {
-	err = DB.Find(&food, "id = ?", foodId).Error
-	return
+func RetrieveFood(foodId uint, DB *gorm.DB) (*Food, error) {
+	var food *Food
+	err := DB.Find(&food, "id = ?", foodId).Error
+	return food, err
 }
 
-func RetrieveFoods(speciesId uint, DB *gorm.DB) (foods *[]Food, err error) {
-	err = DB.Find(&foods, "target_species = ?", speciesId).Error
-	return
+func RetrieveFoods(speciesId uint, DB *gorm.DB) (*[]Food, error) {
+	var foods *[]Food
+	err := DB.Find(&foods, "target_species = ?", speciesId).Error
+	return foods, err
 }

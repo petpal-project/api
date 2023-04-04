@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-
 	"gorm.io/gorm"
 )
 
@@ -14,41 +12,31 @@ type Image struct {
 	Description string `json:"description" binding:"required"`
 }
 
+const imageId = "imageId"
+
 func (image Image) GetUserID() uint { return image.UserID }
 func (image Image) GetID() uint     { return image.ID }
 
-func (image *Image) BeforeDelete(DB *gorm.DB) (err error) {
-	var imageInDB *Image
-	userId, userExists := DB.Get("userId")
-	imageId, imageExists := DB.Get("imageId")
-	if !userExists {
-		err = errors.New("missing user id")
-	} else if !imageExists {
-		err = errors.New("missing image id")
-	} else if err = DB.Select("user_id").First(&imageInDB, "id = ? ", imageId).Error; err != nil {
-		return
-	} else if imageInDB.UserID != userId {
-		err = errors.New("image does not belong to user")
-	}
-	return
+func (image *Image) BeforeDelete(DB *gorm.DB) error {
+	return CheckOwnership[Image](imageId, DB)
 }
 
-func CreateImage(image *Image, DB *gorm.DB) (err error) {
-	err = DB.Create(&image).Error
-	return
+func CreateImage(image *Image, DB *gorm.DB) error {
+	return DB.Create(&image).Error
 }
 
-func RetrieveImagesByUser(userId uint, DB *gorm.DB) (images *[]Image, err error) {
-	err = DB.Find(&images, "user_id = ?", userId).Error
-	return
+func RetrieveImagesByUser(userId uint, DB *gorm.DB) (*[]Image, error) {
+	var images *[]Image
+	err := DB.Find(&images, "user_id = ?", userId).Error
+	return images, err
 }
 
-func RetrieveImagesByPet(userId uint, petId uint, DB *gorm.DB) (images *[]Image, err error) {
-	err = DB.Find(&images, "user_id = ? and pet_id = ?", userId, petId).Error
-	return
+func RetrieveImagesByPet(userId uint, petId uint, DB *gorm.DB) (*[]Image, error) {
+	var images *[]Image
+	err := DB.Find(&images, "user_id = ? and pet_id = ?", userId, petId).Error
+	return images, err
 }
 
-func DeleteImage(imageId uint, userId uint, DB *gorm.DB) (err error) {
-	err = DB.Set("imageId", imageId).Set("userId", userId).Delete(&Image{}, "id = ?", imageId).Error
-	return
+func DeleteImage(imageId uint, userId uint, DB *gorm.DB) error {
+	return DB.Set("imageId", imageId).Set("userId", userId).Delete(&Image{}, "id = ?", imageId).Error
 }
