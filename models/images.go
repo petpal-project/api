@@ -12,13 +12,11 @@ type Image struct {
 	Description string `json:"description" binding:"required"`
 }
 
-const imageId = "imageId"
-
 func (image Image) GetUserID() uint { return image.UserID }
 func (image Image) GetID() uint     { return image.ID }
 
 func (image *Image) BeforeDelete(DB *gorm.DB) error {
-	return CheckOwnership[Image](imageId, DB)
+	return CheckOwnership[Image](DB)
 }
 
 func CreateImage(image *Image, DB *gorm.DB) error {

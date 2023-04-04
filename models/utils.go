@@ -8,6 +8,7 @@ import (
 )
 
 const GORM_CONTEXT_USER_KEY = "user"
+const GORM_CONTEXT_STRUCT_KEY = "struct"
 const GORM_CONTEXT_MISSING_USER = "missing user id"
 const GORM_CONTEXT_MISSING_OBJECT = "missing object id"
 
@@ -17,11 +18,11 @@ type OwnedObject interface {
 	GetID() uint
 }
 
-func CheckOwnership[T OwnedObject](key string, DB *gorm.DB) error {
+func CheckOwnership[T OwnedObject](DB *gorm.DB) error {
 	var emptyStruct T
 
 	userId, userExists := DB.Get(GORM_CONTEXT_USER_KEY)
-	id, exists := DB.Get(key)
+	id, exists := DB.Get(GORM_CONTEXT_STRUCT_KEY)
 
 	if !userExists {
 		return errors.New(GORM_CONTEXT_MISSING_USER)

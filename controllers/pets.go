@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"pet-pal/api/config"
+	"pet-pal/api/datasources"
 	"pet-pal/api/models"
 	"strconv"
 
@@ -24,7 +25,8 @@ func GetPet(c *gin.Context) {
 		return
 	}
 
-	pet, err = models.RetrievePet(uint(pid), uint(uid.(int)), DB)
+	//pet, err = models.RetrievePet(uint(pid), uint(uid.(int)), DB)
+	pet, err = datasources.RetrieveSingleRecord[models.Pet](uint(pid), uint(uid.(int)), DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -44,7 +46,8 @@ func GetPets(c *gin.Context) {
 		return
 	}
 
-	pets, err = models.RetrievePets(uint(uid.(int)), DB)
+	//pets, err = models.RetrievePets(uint(uid.(int)), DB)
+	pets, err = datasources.RetrieveMultipleRecords[models.Pet](uint(uid.(int)), DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -69,7 +72,8 @@ func PostPet(c *gin.Context) {
 	}
 
 	pet.UserID = uint(uid.(int))
-	if err = models.CreatePet(pet, DB); err != nil {
+	//if err = models.CreatePet(pet, DB); err != nil {
+	if err = datasources.CreateRecord(pet, DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -97,8 +101,11 @@ func PutPet(c *gin.Context) {
 		c.JSON(400, err.Error())
 		return
 	}
+	pet.ID = uint(pid)
 
-	if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
+	//if pet, err = models.UpdatePet(uint(uid.(int)), uint(pid), pet, DB); err != nil {
+	pet, err = datasources.UpdateRecord(uint(uid.(int)), *pet, DB)
+	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -120,8 +127,8 @@ func DeletePet(c *gin.Context) {
 		return
 	}
 
-	err = models.DeletePet(uint(pid), uint(uid.(int)), DB)
-	if err != nil {
+	//if err = models.DeletePet(uint(pid), uint(uid.(int)), DB); err != nil {
+	if err = datasources.DeleteRecord[models.Pet](uint(pid), uint(uid.(int)), DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}

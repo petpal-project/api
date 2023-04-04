@@ -22,11 +22,11 @@ func (pet Pet) GetUserID() uint { return pet.UserID }
 func (pet Pet) GetID() uint     { return pet.ID }
 
 func (pet *Pet) BeforeUpdate(DB *gorm.DB) error {
-	return CheckOwnership[Pet]("pet", DB)
+	return CheckOwnership[Pet](DB)
 }
 
 func (pet *Pet) BeforeDelete(DB *gorm.DB) error {
-	return CheckOwnership[Pet]("pet", DB)
+	return CheckOwnership[Pet](DB)
 }
 
 func CreatePet(pet *Pet, DB *gorm.DB) error {
