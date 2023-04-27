@@ -1,17 +1,9 @@
 openapi: '3.0.2'
 info:
   title: PetPal API
-  version: '0.1.0'
-
+  version: '1.0.0'
 servers:
   - url: http://localhost:3000/
-
-tags:
-  - name: Pets
-  - name: Users
-  - name: Species
-  - name: Breeds
-
 paths:
   /breeds:
     get:
@@ -283,7 +275,6 @@ paths:
       responses:
         '200':
           description: OK
-
 components:
   schemas:
     Pet:
@@ -336,8 +327,6 @@ components:
           type: string
         size:
           type: string
-        heightMale:
-          type: string
         heightFemale:
           type: string
         weightMale:
@@ -356,8 +345,8 @@ components:
           type: string
         activities:
           type: string
-  securitySchemes:
-    name:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+tags:
+  - name: Pets
+  - name: Users
+  - name: Species
+  - name: Breeds
