@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,6 +9,6 @@ import (
 
 func ServeSwaggerUI (c *gin.Context) {
 	c.HTML(http.StatusOK, "swagger-ui.html", gin.H{
-		"url": "http://localhost:3000/static/docs/openapi.yml",
+		"url": fmt.Sprintf("http://%s/static/docs/openapi.yml", c.Request.Host),
 	})
 }
