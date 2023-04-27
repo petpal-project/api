@@ -6,7 +6,6 @@ import (
 	"pet-pal/api/middleware"
 
 	"github.com/gin-gonic/gin"
-	swaggerMiddleware "github.com/go-openapi/runtime/middleware"
 )
 
 func pingHandler(c *gin.Context) {
@@ -16,17 +15,17 @@ func pingHandler(c *gin.Context) {
 }
 
 func main() {
-	// authClient := config.InitFirebase()
 	config.InitDb()
 
-	var r *gin.Engine = gin.Default()
-	r.GET("/ping", pingHandler)
+	router := gin.Default()
 
-	opts := swaggerMiddleware.SwaggerUIOpts{SpecURL: "docs/openapi.yml"}
-	sh := swaggerMiddleware.SwaggerUI(opts, nil)
-	r.GET("/docs/*any", gin.WrapH(sh))
+	router.LoadHTMLGlob("templates/*")
+	router.Static("/static", "./static")
 
-	var api *gin.RouterGroup = r.Group("/api")
+	router.GET("/", controllers.ServeSwaggerUI)
+	router.GET("/ping", pingHandler)
+
+	var api *gin.RouterGroup = router.Group("/api")
 	{
 		// api.Use(middleware.TokenAuth(authClient, DB))
 		api.Use(middleware.TempUserAuth)
@@ -98,5 +97,5 @@ func main() {
 		}
 	}
 
-	r.Run(":3000")
+	router.Run(":3000")
 }
