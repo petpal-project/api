@@ -9,7 +9,7 @@ import (
 )
 
 type MedicineService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *MedicineService) GetMedicine(c *gin.Context) {

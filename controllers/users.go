@@ -9,7 +9,7 @@ import (
 )
 
 type UserService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *UserService) PostUser(c *gin.Context) {

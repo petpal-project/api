@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"pet-pal/api/config"
 	"pet-pal/api/controllers"
 	"pet-pal/api/middleware"
@@ -100,5 +101,5 @@ func main() {
 		}
 	}
 
-	router.Run(":3000")
+	http.ListenAndServe(":3000", router)
 }

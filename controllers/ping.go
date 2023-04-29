@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PingService struct {}
+type PingService struct{}
 
 func (service *PingService) Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{

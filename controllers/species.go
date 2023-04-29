@@ -9,7 +9,7 @@ import (
 )
 
 type SpeciesService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *SpeciesService) GetSpecies(c *gin.Context) {

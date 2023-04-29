@@ -10,7 +10,7 @@ import (
 )
 
 type ImageService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *ImageService) GetImagesByPet(c *gin.Context) {
