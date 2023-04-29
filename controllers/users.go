@@ -9,7 +9,7 @@ import (
 )
 
 type UserService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *UserService) PostUser(c *gin.Context) {
@@ -54,6 +54,6 @@ func (s *UserService) DeleteUser(c *gin.Context) {
 		c.JSON(500, err.Error())
 		return
 	}
-	
+
 	c.Status(204)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 type EventService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *EventService) GetEvents(c *gin.Context) {

@@ -9,7 +9,7 @@ import (
 )
 
 type FoodService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *FoodService) GetFood(c *gin.Context) {

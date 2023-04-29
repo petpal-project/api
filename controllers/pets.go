@@ -10,7 +10,7 @@ import (
 )
 
 type PetService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *PetService) GetPet(c *gin.Context) {
@@ -47,7 +47,7 @@ func (s *PetService) GetPets(c *gin.Context) {
 		c.JSON(500, err.Error())
 		return
 	}
-	
+
 	c.JSON(200, pets)
 }
 

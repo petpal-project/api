@@ -9,7 +9,7 @@ import (
 )
 
 type BreedService struct {
-	DB	*gorm.DB
+	DB *gorm.DB
 }
 
 func (s *BreedService) GetBreed(c *gin.Context) {
