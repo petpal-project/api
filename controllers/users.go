@@ -2,28 +2,23 @@ package controllers
 
 import (
 	"fmt"
-	"pet-pal/api/config"
 	"pet-pal/api/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func GetUserIdFromFirebaseId(tokenUID string) uint {
-	var DB *gorm.DB = config.DB
-	var user models.User
-	DB.Where("account_id = ?", tokenUID).First(&user)
-	return user.ID
+type UserService struct {
+	DB	*gorm.DB
 }
 
-func PostUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
+func (s *UserService) PostUser(c *gin.Context) {
 	var user *models.User
 
 	if err := c.BindJSON(&user); err != nil {
 		return
 	}
-	err := models.CreateUser(user, DB)
+	err := models.CreateUser(user, s.DB)
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 	} else {
@@ -31,14 +26,10 @@ func PostUser(c *gin.Context) {
 	}
 }
 
-func GetUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
-	var user *models.User
-	var err error
-
+func (s *UserService) GetUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 	if exists {
-		user, err = models.RetrieveUser(uint(userId.(int)), DB)
+		user, err := models.RetrieveUser(uint(userId.(int)), s.DB)
 		if err != nil {
 			c.JSON(500, "Internal Server Error")
 		} else {
@@ -49,12 +40,11 @@ func GetUser(c *gin.Context) {
 	}
 }
 
-func DeleteUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
+func (s *UserService) DeleteUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 
 	if exists {
-		err := models.DeleteUser(uint(userId.(int)), DB)
+		err := models.DeleteUser(uint(userId.(int)), s.DB)
 		if err != nil {
 			c.JSON(500, "Internal Server Error")
 		} else {

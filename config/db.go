@@ -10,10 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
-
-func migrate() {
-	err := DB.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.Event{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
+func migrate(db *gorm.DB) {
+	err := db.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.Event{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
 	if err != nil {
 		log.Fatalf("An error occured while performing auto-migration: %v\n", err)
 	} else {
@@ -28,7 +26,6 @@ func InitDb() *gorm.DB {
 	if err != nil {
 		log.Fatalf("Error opening connection to database %v\n", err)
 	}
-	DB = db
-	migrate()
-	return DB
+	migrate(db)
+	return db
 }
