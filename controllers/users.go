@@ -2,22 +2,17 @@ package controllers
 
 import (
 	"fmt"
-	"pet-pal/api/config"
 	"pet-pal/api/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func GetUserIdFromFirebaseId(tokenUID string) uint {
-	var DB *gorm.DB = config.DB
-	var user models.User
-	DB.Where("account_id = ?", tokenUID).First(&user)
-	return user.ID
+type UserService struct {
+	DB	*gorm.DB
 }
 
-func PostUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
+func (s *UserService) PostUser(c *gin.Context) {
 	var user *models.User
 
 	if err := c.BindJSON(&user); err != nil {
@@ -25,7 +20,7 @@ func PostUser(c *gin.Context) {
 		return
 	}
 
-	if err := models.CreateUser(user, DB); err != nil {
+	if err := models.CreateUser(user, s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -33,18 +28,14 @@ func PostUser(c *gin.Context) {
 	c.JSON(200, fmt.Sprintf("User with ID %d Created", user.ID))
 }
 
-func GetUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
-	var user *models.User
-	var err error
-
+func (s *UserService) GetUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 	if !exists {
 		c.JSON(400, missingUserId)
 		return
 	}
 
-	user, err = models.RetrieveUser(uint(userId.(int)), DB)
+	user, err := models.RetrieveUser(uint(userId.(int)), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 	}
@@ -52,17 +43,17 @@ func GetUser(c *gin.Context) {
 	c.JSON(200, &user)
 }
 
-func DeleteUser(c *gin.Context) {
-	var DB *gorm.DB = config.DB
+func (s *UserService) DeleteUser(c *gin.Context) {
 	userId, exists := c.Get("user")
-
 	if !exists {
 		c.JSON(400, missingUserId)
 		return
 	}
-	if err := models.DeleteUser(uint(userId.(int)), DB); err != nil {
+
+	if err := models.DeleteUser(uint(userId.(int)), s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
+	
 	c.Status(204)
 }
