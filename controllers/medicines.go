@@ -17,14 +17,16 @@ func GetMedicine(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(400, "Medicine ID must be numeric.")
-	} else {
-		medicine, err = models.GetMedicine(uint(medId), DB)
-		if err != nil {
-			c.JSON(500, err.Error())
-		} else {
-			c.JSON(200, medicine)
-		}
+		return
 	}
+
+	medicine, err = models.GetMedicine(uint(medId), DB)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	c.JSON(200, medicine)
 }
 
 func GetMedicines(c *gin.Context) {
@@ -32,15 +34,16 @@ func GetMedicines(c *gin.Context) {
 	var DB *gorm.DB = config.DB
 
 	speciesId, err := strconv.Atoi(c.Query("speciesId"))
-
 	if err != nil {
 		c.JSON(400, "Species ID must be numeric.")
-	} else {
-		medicines, err = models.GetMedicines(uint(speciesId), DB)
-		if err != nil {
-			c.JSON(500, err.Error())
-		} else {
-			c.JSON(200, medicines)
-		}
+		return
 	}
+
+	medicines, err = models.GetMedicines(uint(speciesId), DB)
+	if err != nil {
+		c.JSON(500, err.Error())
+		return
+	}
+
+	c.JSON(200, medicines)
 }

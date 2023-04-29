@@ -13,6 +13,8 @@ type Meal struct {
 	Food      []Food `gorm:"many2many:meal_foods;"`
 }
 
+func (meal Meal) GetID() uint { return meal.ID }
+
 type Medication struct {
 	gorm.Model
 	PetID     uint
@@ -21,3 +23,5 @@ type Medication struct {
 	EndDate   time.Time
 	Medicine  []Medicine `gorm:"many2many:medication_medicines"`
 }
+
+func (medication Medication) GetID() uint { return medication.ID }

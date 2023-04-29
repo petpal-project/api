@@ -17,13 +17,14 @@ type Event struct {
 }
 
 func (event Event) GetUserID() uint { return event.UserID }
+func (event Event) GetID() uint     { return event.ID }
 
 func (event *Event) BeforeUpdate(DB *gorm.DB) error {
-	return checkOwnership[Event]("event", DB)
+	return CheckOwnership[Event](DB)
 }
 
 func (event *Event) BeforeDelete(DB *gorm.DB) error {
-	return checkOwnership[Event]("event", DB)
+	return CheckOwnership[Event](DB)
 }
 
 func CreateEvent(event *Event, DB *gorm.DB) error {

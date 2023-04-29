@@ -8,12 +8,16 @@ type Medicine struct {
 	TargetSpecies uint
 }
 
-func GetMedicine(medId uint, DB *gorm.DB) (med *Medicine, err error) {
-	err = DB.First(&med, "id =  ?", medId).Error
-	return
+func (medicine Medicine) GetID() uint { return medicine.ID }
+
+func GetMedicine(medId uint, DB *gorm.DB) (*Medicine, error) {
+	var medicine *Medicine
+	err := DB.First(&medicine, "id =  ?", medId).Error
+	return medicine, err
 }
 
-func GetMedicines(speciesId uint, DB *gorm.DB) (meds *[]Medicine, err error) {
-	err = DB.Find(&meds, "target_species = ?", speciesId).Error
-	return
+func GetMedicines(speciesId uint, DB *gorm.DB) (*[]Medicine, error) {
+	var medicines *[]Medicine
+	err := DB.Find(&medicines, "target_species = ?", speciesId).Error
+	return medicines, err
 }
