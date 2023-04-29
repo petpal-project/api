@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"pet-pal/api/config"
 	"pet-pal/api/models"
 	"strconv"
 
@@ -9,9 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetBreed(c *gin.Context) {
-	var DB *gorm.DB = config.DB
-	var breed *models.Breed
+type BreedService struct {
+	DB *gorm.DB
+}
+
+func (s *BreedService) GetBreed(c *gin.Context) {
 	bid, err := strconv.Atoi(c.Param("breedId"))
 
 	if err != nil {
@@ -19,7 +20,7 @@ func GetBreed(c *gin.Context) {
 		return
 	}
 
-	breed, err = models.RetrieveBreed(uint(bid), DB)
+	breed, err := models.RetrieveBreed(uint(bid), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -28,9 +29,7 @@ func GetBreed(c *gin.Context) {
 	c.JSON(200, &breed)
 }
 
-func GetBreeds(c *gin.Context) {
-	var DB *gorm.DB = config.DB
-	var breeds *[]models.Breed
+func (s *BreedService) GetBreeds(c *gin.Context) {
 	sid, err := strconv.Atoi(c.Query("speciesId"))
 
 	if err != nil {
@@ -38,7 +37,7 @@ func GetBreeds(c *gin.Context) {
 		return
 	}
 
-	breeds, err = models.RetrieveBreeds(uint(sid), DB)
+	breeds, err := models.RetrieveBreeds(uint(sid), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"pet-pal/api/config"
 	"pet-pal/api/models"
 	"strconv"
 
@@ -9,18 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetSpecies(c *gin.Context) {
-	var DB *gorm.DB = config.DB
-	var species *models.Species
+type SpeciesService struct {
+	DB *gorm.DB
+}
 
+func (s *SpeciesService) GetSpecies(c *gin.Context) {
 	sid, err := strconv.Atoi(c.Param("speciesId"))
-
 	if err != nil {
 		c.JSON(400, "Species ID must be numeric")
 		return
 	}
 
-	if species, err = models.RetrieveSpecies(uint(sid), DB); err != nil {
+	species, err := models.RetrieveSpecies(uint(sid), s.DB)
+	if err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
