@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	api "pet-pal/api/pkg/models"
+	api "pet-pal/api/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

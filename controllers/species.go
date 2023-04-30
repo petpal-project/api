@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"pet-pal/api/pkg/models"
+	"pet-pal/api/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
