@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"pet-pal/api/models"
+	"pet-pal/api/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

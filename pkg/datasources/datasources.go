@@ -1,7 +1,7 @@
 package datasources
 
 import (
-	"pet-pal/api/models"
+	"pet-pal/api/pkg/models"
 
 	"gorm.io/gorm"
 )
