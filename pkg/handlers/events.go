@@ -1,25 +1,25 @@
-package controllers
+package handlers
 
 import (
 	"pet-pal/api/pkg/models"
+	"pet-pal/api/pkg/services"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-type EventService struct {
-	DB *gorm.DB
+type EventHandler struct {
+	EventService services.EventService
 }
 
-func (s *EventService) GetEvents(c *gin.Context) {
+func (h EventHandler) GetEvents(c *gin.Context) {
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
 	if !userExists {
 		c.JSON(400, missingUserId)
 		return
 	}
 
-	events, err := models.RetrieveEvents(uint(userId.(int)), s.DB)
+	events, err := h.EventService.GetEventsByUserId(uint(userId.(int)))
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -28,7 +28,7 @@ func (s *EventService) GetEvents(c *gin.Context) {
 	c.JSON(200, events)
 }
 
-func (s *EventService) PostEvent(c *gin.Context) {
+func (h EventHandler) PostEvent(c *gin.Context) {
 	var event *models.Event = &models.Event{}
 
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
@@ -43,7 +43,7 @@ func (s *EventService) PostEvent(c *gin.Context) {
 		return
 	}
 
-	if err := models.CreateEvent(event, s.DB); err != nil {
+	if err := h.EventService.CreateEvent(event); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -51,7 +51,7 @@ func (s *EventService) PostEvent(c *gin.Context) {
 	c.JSON(200, &event)
 }
 
-func (s *EventService) PutEvent(c *gin.Context) {
+func (h EventHandler) PutEvent(c *gin.Context) {
 	var event *models.Event = &models.Event{}
 
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
@@ -72,7 +72,7 @@ func (s *EventService) PutEvent(c *gin.Context) {
 		return
 	}
 
-	if event, err = models.UpdateEvent(uint(userId.(int)), event, s.DB); err != nil {
+	if event, err = h.EventService.UpdateEvent(uint(userId.(int)), event); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -80,7 +80,7 @@ func (s *EventService) PutEvent(c *gin.Context) {
 	c.JSON(200, event)
 }
 
-func (s *EventService) DeleteEvent(c *gin.Context) {
+func (h EventHandler) DeleteEvent(c *gin.Context) {
 	userId, userExists := c.Get(GIN_CONTEXT_USER_KEY)
 	if !userExists {
 		c.JSON(400, missingUserId)
@@ -93,7 +93,7 @@ func (s *EventService) DeleteEvent(c *gin.Context) {
 		return
 	}
 
-	if err = models.DeleteEvent(uint(userId.(int)), uint(eventId), s.DB); err != nil {
+	if err = h.EventService.DeleteEvent(uint(userId.(int)), uint(eventId)); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
