@@ -1,24 +1,25 @@
-package handlers
+package controllers
 
 import (
-	"pet-pal/api/pkg/services"
+	"pet-pal/api/pkg/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-type MedicineHandler struct {
-	MedicineService	services.MedicineService
+type MedicineService struct {
+	DB *gorm.DB
 }
 
-func (h MedicineHandler) GetMedicine(c *gin.Context) {
+func (s *MedicineService) GetMedicine(c *gin.Context) {
 	medId, err := strconv.Atoi(c.Param("medicineId"))
 	if err != nil {
 		c.JSON(400, "Medicine ID must be numeric.")
 		return
 	}
 
-	medicine, err := h.MedicineService.GetMedicineById(uint(medId))
+	medicine, err := models.GetMedicine(uint(medId), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -27,14 +28,14 @@ func (h MedicineHandler) GetMedicine(c *gin.Context) {
 	c.JSON(200, medicine)
 }
 
-func (h MedicineHandler) GetMedicines(c *gin.Context) {
+func (s *MedicineService) GetMedicines(c *gin.Context) {
 	speciesId, err := strconv.Atoi(c.Query("speciesId"))
 	if err != nil {
 		c.JSON(400, "Species ID must be numeric.")
 		return
 	}
 
-	medicines, err := h.MedicineService.GetMedicinesBySpeciesId(uint(speciesId))
+	medicines, err := models.GetMedicines(uint(speciesId), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return

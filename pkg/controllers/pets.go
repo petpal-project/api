@@ -1,19 +1,19 @@
-package handlers
+package controllers
 
 import (
-	"net/http"
+	"pet-pal/api/pkg/datasources"
 	"pet-pal/api/pkg/models"
-	"pet-pal/api/pkg/services"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-type PetHandler struct {
-	PetService services.PetService
+type PetService struct {
+	DB *gorm.DB
 }
 
-func (h PetHandler) GetPet(c *gin.Context) {
+func (s *PetService) GetPet(c *gin.Context) {
 	uid, userExists := c.Get("user")
 	if !userExists {
 		c.JSON(400, missingUserId)
@@ -26,28 +26,23 @@ func (h PetHandler) GetPet(c *gin.Context) {
 		return
 	}
 
-	pet, err := h.PetService.GetPetById(uint(pid))
+	pet, err := datasources.RetrieveSingleRecord[models.Pet](uint(pid), uint(uid.(int)), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
-		return
-	}
-
-	if pet.UserID != uid {
-		c.JSON(http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	c.JSON(200, &pet)
 }
 
-func (h PetHandler) GetPets(c *gin.Context) {
+func (s *PetService) GetPets(c *gin.Context) {
 	uid, userExists := c.Get("user")
 	if !userExists {
 		c.JSON(400, missingUserId)
 		return
 	}
 
-	pets, err := h.PetService.GetPetsByUserId(uint(uid.(int)))
+	pets, err := datasources.RetrieveMultipleRecords[models.Pet](uint(uid.(int)), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -56,7 +51,7 @@ func (h PetHandler) GetPets(c *gin.Context) {
 	c.JSON(200, pets)
 }
 
-func (h PetHandler) PostPet(c *gin.Context) {
+func (s *PetService) PostPet(c *gin.Context) {
 	var pet *models.Pet
 
 	uid, userExists := c.Get("user")
@@ -71,7 +66,7 @@ func (h PetHandler) PostPet(c *gin.Context) {
 	}
 
 	pet.UserID = uint(uid.(int))
-	if err := h.PetService.CreatePet(pet); err != nil {
+	if err := datasources.CreateRecord(pet, s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -79,8 +74,8 @@ func (h PetHandler) PostPet(c *gin.Context) {
 	c.JSON(200, &pet)
 }
 
-func (h PetHandler) PutPet(c *gin.Context) {
-	var petForm models.Pet
+func (s *PetService) PutPet(c *gin.Context) {
+	var pet *models.Pet
 
 	uid, userExists := c.Get("user")
 	if !userExists {
@@ -94,14 +89,14 @@ func (h PetHandler) PutPet(c *gin.Context) {
 		return
 	}
 
-	if err = c.BindJSON(&petForm); err != nil {
+	if err = c.BindJSON(&pet); err != nil {
 		c.JSON(400, err.Error())
 		return
 	}
 
-	petForm.ID = uint(pid)
+	pet.ID = uint(pid)
 
-	pet, err := h.PetService.UpdatePet(uint(uid.(int)), petForm)
+	pet, err = datasources.UpdateRecord(uint(uid.(int)), *pet, s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -110,7 +105,7 @@ func (h PetHandler) PutPet(c *gin.Context) {
 	c.JSON(201, &pet)
 }
 
-func (h PetHandler) DeletePet(c *gin.Context) {
+func (s *PetService) DeletePet(c *gin.Context) {
 	uid, userExists := c.Get("user")
 	if !userExists {
 		c.JSON(400, missingUserId)
@@ -123,7 +118,7 @@ func (h PetHandler) DeletePet(c *gin.Context) {
 		return
 	}
 
-	if err = h.PetService.DeletePet(uint(pid), uint(uid.(int))); err != nil {
+	if err = datasources.DeleteRecord[models.Pet](uint(pid), uint(uid.(int)), s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}

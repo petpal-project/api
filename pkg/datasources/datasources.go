@@ -11,12 +11,6 @@ type QueryableStruct interface {
 	GetID() uint
 }
 
-func RetrieveRecordById[T QueryableStruct](structId uint, DB *gorm.DB) (*T, error) {
-	var record *T
-	err := DB.First(&record, "id = ?", structId).Error
-	return record, err
-}
-
 func RetrieveSingleRecord[T QueryableStruct](structId uint, userId uint, DB *gorm.DB) (*T, error) {
 	var record *T
 	err := DB.First(&record, "id = ? AND user_id = ?", structId, userId).Error

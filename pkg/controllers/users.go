@@ -1,18 +1,18 @@
-package handlers
+package controllers
 
 import (
 	"fmt"
 	"pet-pal/api/pkg/models"
-	"pet-pal/api/pkg/services"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-type UserHandler struct {
-	UserService services.UserService
+type UserService struct {
+	DB *gorm.DB
 }
 
-func (h UserHandler) PostUser(c *gin.Context) {
+func (s *UserService) PostUser(c *gin.Context) {
 	var user *models.User
 
 	if err := c.BindJSON(&user); err != nil {
@@ -20,7 +20,7 @@ func (h UserHandler) PostUser(c *gin.Context) {
 		return
 	}
 
-	if err := h.UserService.CreateUser(user); err != nil {
+	if err := models.CreateUser(user, s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}
@@ -28,14 +28,14 @@ func (h UserHandler) PostUser(c *gin.Context) {
 	c.JSON(200, fmt.Sprintf("User with ID %d Created", user.ID))
 }
 
-func (h UserHandler) GetUser(c *gin.Context) {
+func (s *UserService) GetUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 	if !exists {
 		c.JSON(400, missingUserId)
 		return
 	}
 
-	user, err := h.UserService.GetUserById(uint(userId.(int)))
+	user, err := models.RetrieveUser(uint(userId.(int)), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 	}
@@ -43,14 +43,14 @@ func (h UserHandler) GetUser(c *gin.Context) {
 	c.JSON(200, &user)
 }
 
-func (h UserHandler) DeleteUser(c *gin.Context) {
+func (s *UserService) DeleteUser(c *gin.Context) {
 	userId, exists := c.Get("user")
 	if !exists {
 		c.JSON(400, missingUserId)
 		return
 	}
 
-	if err := h.UserService.DeleteUser(uint(userId.(int))); err != nil {
+	if err := models.DeleteUser(uint(userId.(int)), s.DB); err != nil {
 		c.JSON(500, err.Error())
 		return
 	}

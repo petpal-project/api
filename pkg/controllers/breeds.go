@@ -1,17 +1,18 @@
-package handlers
+package controllers
 
 import (
-	"pet-pal/api/pkg/services"
+	"pet-pal/api/pkg/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-type BreedHandler struct {
-	BreedService services.BreedService
+type BreedService struct {
+	DB *gorm.DB
 }
 
-func (h BreedHandler) GetBreed(c *gin.Context) {
+func (s *BreedService) GetBreed(c *gin.Context) {
 	bid, err := strconv.Atoi(c.Param("breedId"))
 
 	if err != nil {
@@ -19,7 +20,7 @@ func (h BreedHandler) GetBreed(c *gin.Context) {
 		return
 	}
 
-	breed, err := h.BreedService.GetBreedById(uint(bid))
+	breed, err := models.RetrieveBreed(uint(bid), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
@@ -28,7 +29,7 @@ func (h BreedHandler) GetBreed(c *gin.Context) {
 	c.JSON(200, &breed)
 }
 
-func (h BreedHandler) GetBreeds(c *gin.Context) {
+func (s *BreedService) GetBreeds(c *gin.Context) {
 	sid, err := strconv.Atoi(c.Query("speciesId"))
 
 	if err != nil {
@@ -36,7 +37,7 @@ func (h BreedHandler) GetBreeds(c *gin.Context) {
 		return
 	}
 
-	breeds, err := h.BreedService.GetBreedsBySpeciesId(uint(sid))
+	breeds, err := models.RetrieveBreeds(uint(sid), s.DB)
 	if err != nil {
 		c.JSON(500, err.Error())
 		return
