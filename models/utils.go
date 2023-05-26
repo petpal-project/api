@@ -13,7 +13,7 @@ const GORM_CONTEXT_MISSING_USER = "missing user id"
 const GORM_CONTEXT_MISSING_OBJECT = "missing object id"
 
 type OwnedObject interface {
-	Pet | Image | Event | Meal | Medication
+	Pet
 	GetUserID() uint
 	GetID() uint
 }

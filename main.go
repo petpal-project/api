@@ -11,92 +11,39 @@ import (
 func main() {
 	db := config.InitDb()
 
-	pingService := controllers.PingService{}
-	userService := controllers.UserService{DB: db}
-	petService := controllers.PetService{DB: db}
-	speciesService := controllers.SpeciesService{DB: db}
-	breedService := controllers.BreedService{DB: db}
-	foodService := controllers.FoodService{DB: db}
-	medicineService := controllers.MedicineService{DB: db}
-	eventService := controllers.EventService{DB: db}
-	imageService := controllers.ImageService{DB: db}
-
 	router := gin.Default()
 
 	router.LoadHTMLGlob("templates/*")
 	router.Static("/static", "./static")
 
 	router.GET("/", controllers.ServeSwaggerUI)
-	router.GET("/ping", pingService.Ping)
+	router.GET("/ping", controllers.Ping)
 
 	api := router.Group("/api")
 	{
 		api.Use(middleware.TempUserAuth)
 		users := api.Group("/users")
 		{
-			users.GET("/", userService.GetUser)
-			users.POST("/", userService.PostUser)
-			users.DELETE("/", userService.DeleteUser)
+			users.GET("/", controllers.GetUser(db))
+			users.POST("/", controllers.PostUser(db))
+			users.DELETE("/", controllers.DeleteUser(db))
 		}
 		pets := api.Group("/pets")
 		{
-			pets.GET("/", petService.GetPets)
-			pets.GET("/:petId", petService.GetPet)
-			pets.POST("/", petService.PostPet)
-			pets.PUT("/:petId", petService.PutPet)
-			pets.DELETE("/:petId", petService.DeletePet)
+			pets.GET("/", controllers.GetPets(db))
+			pets.GET("/:petId", controllers.GetPet(db))
+			pets.POST("/", controllers.PostPet(db))
+			pets.PUT("/:petId", controllers.PutPet(db))
+			pets.DELETE("/:petId", controllers.DeletePet(db))
 		}
 		species := api.Group("/species")
 		{
-			species.GET("/:speciesId", speciesService.GetSpecies)
+			species.GET("/:speciesId", controllers.GetSpecies(db))
 		}
 		breeds := api.Group("/breeds")
 		{
-			breeds.GET("/", breedService.GetBreeds)
-			breeds.GET("/:breedId", breedService.GetBreed)
-		}
-		foods := api.Group("/foods")
-		{
-			foods.GET("/:foodId", foodService.GetFood)
-			foods.GET("/", foodService.GetFoods)
-		}
-		medicines := api.Group("/medicines")
-		{
-			medicines.GET("/:medicineId", medicineService.GetMedicine)
-			medicines.GET("/", medicineService.GetMedicines)
-		}
-		// for these two groups, could we want to have a new router group like
-		// petMeals = := api.Group("/:mealId") ?
-		meals := api.Group("/meals")
-		{
-			meals.GET("/:mealId")
-			meals.GET("/pet/:petId")
-			meals.PUT("/:mealId")
-			meals.POST("/")
-			meals.DELETE("/:mealId")
-
-		}
-		medications := api.Group("/medications")
-		{
-			medications.GET("/:medicationId")
-			medications.GET("/pets/:petId")
-			medications.PUT("/:medicationId")
-			medications.POST("/")
-			medications.DELETE("/:medicationId")
-		}
-		events := api.Group("/events")
-		{
-			events.GET("/", eventService.GetEvents)
-			events.POST("/", eventService.PostEvent)
-			events.PUT("/:eventId", eventService.PutEvent)
-			events.DELETE("/:eventId", eventService.DeleteEvent)
-		}
-		images := api.Group("/images")
-		{
-			images.GET("/pets/:petId", imageService.GetImagesByPet)
-			images.GET("/users", imageService.GetImagesByUser)
-			images.POST("/", imageService.PostImage)
-			images.DELETE("/:imageId", imageService.DeleteImage)
+			breeds.GET("/", controllers.GetBreeds(db))
+			breeds.GET("/:breedId", controllers.GetBreed(db))
 		}
 	}
 

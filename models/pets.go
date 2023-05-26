@@ -12,10 +12,6 @@ type Pet struct {
 	SpeciesID   uint         `json:"speciesId"`
 	Species     Species      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Age         uint         `json:"age"`
-	Images      []Image      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Meals       []Meal       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Medications []Medication `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Events      []Event      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (pet Pet) GetUserID() uint { return pet.UserID }

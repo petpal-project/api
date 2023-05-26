@@ -11,7 +11,7 @@ import (
 )
 
 func migrate(db *gorm.DB) {
-	err := db.AutoMigrate(api.User{}, &api.Breed{}, &api.Food{}, &api.Event{}, &api.Image{}, &api.Meal{}, &api.Medication{}, &api.Medicine{}, &api.Pet{}, &api.Species{})
+	err := db.AutoMigrate(api.User{}, &api.Breed{}, &api.Pet{}, &api.Species{})
 	if err != nil {
 		log.Fatalf("An error occured while performing auto-migration: %v\n", err)
 	} else {

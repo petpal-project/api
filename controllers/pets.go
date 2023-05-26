@@ -9,119 +9,126 @@ import (
 	"gorm.io/gorm"
 )
 
-type PetService struct {
-	DB *gorm.DB
+func GetPet(DB *gorm.DB) func (c *gin.Context) {
+	return func (c *gin.Context) {
+		uid, userExists := c.Get("user")
+		if !userExists {
+			c.JSON(400, missingUserId)
+			return
+		}
+	
+		pid, err := strconv.Atoi(c.Param("petId"))
+		if err != nil {
+			c.JSON(400, idMustBeNumeric)
+			return
+		}
+	
+		pet, err := datasources.RetrieveSingleRecord[models.Pet](uint(pid), uint(uid.(int)), DB)
+		if err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+	
+		c.JSON(200, &pet)
+	}
+
 }
 
-func (s *PetService) GetPet(c *gin.Context) {
-	uid, userExists := c.Get("user")
-	if !userExists {
-		c.JSON(400, missingUserId)
-		return
-	}
+func GetPets(DB *gorm.DB) func(c *gin.Context) {
+	return func (c *gin.Context) {
+		uid, userExists := c.Get("user")
+		if !userExists {
+			c.JSON(400, missingUserId)
+			return
+		}
 
-	pid, err := strconv.Atoi(c.Param("petId"))
-	if err != nil {
-		c.JSON(400, idMustBeNumeric)
-		return
-	}
+		pets, err := datasources.RetrieveMultipleRecords[models.Pet](uint(uid.(int)), DB)
+		if err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
 
-	pet, err := datasources.RetrieveSingleRecord[models.Pet](uint(pid), uint(uid.(int)), s.DB)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
+		c.JSON(200, pets)
 	}
-
-	c.JSON(200, &pet)
 }
 
-func (s *PetService) GetPets(c *gin.Context) {
-	uid, userExists := c.Get("user")
-	if !userExists {
-		c.JSON(400, missingUserId)
-		return
-	}
+func PostPet(DB *gorm.DB) func(c *gin.Context) {
+	return func (c *gin.Context) {
+		var pet *models.Pet
 
-	pets, err := datasources.RetrieveMultipleRecords[models.Pet](uint(uid.(int)), s.DB)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
+		uid, userExists := c.Get("user")
+		if !userExists {
+			c.JSON(400, missingUserId)
+			return
+		}
+	
+		if err := c.BindJSON(&pet); err != nil {
+			c.JSON(400, err.Error())
+			return
+		}
+	
+		pet.UserID = uint(uid.(int))
+		if err := datasources.CreateRecord(pet, DB); err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+	
+		c.JSON(200, &pet)
 	}
-
-	c.JSON(200, pets)
 }
 
-func (s *PetService) PostPet(c *gin.Context) {
-	var pet *models.Pet
+func PutPet(DB *gorm.DB) func (c *gin.Context) {
+	return func (c *gin.Context) {
+		var pet *models.Pet
 
-	uid, userExists := c.Get("user")
-	if !userExists {
-		c.JSON(400, missingUserId)
-		return
+		uid, userExists := c.Get("user")
+		if !userExists {
+			c.JSON(400, missingUserId)
+			return
+		}
+	
+		pid, err := strconv.Atoi(c.Param("petId"))
+		if err != nil {
+			c.JSON(400, idMustBeNumeric)
+			return
+		}
+	
+		if err = c.BindJSON(&pet); err != nil {
+			c.JSON(400, err.Error())
+			return
+		}
+	
+		pet.ID = uint(pid)
+	
+		pet, err = datasources.UpdateRecord(uint(uid.(int)), *pet, DB)
+		if err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+	
+		c.JSON(201, &pet)
 	}
-
-	if err := c.BindJSON(&pet); err != nil {
-		c.JSON(400, err.Error())
-		return
-	}
-
-	pet.UserID = uint(uid.(int))
-	if err := datasources.CreateRecord(pet, s.DB); err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	c.JSON(200, &pet)
 }
 
-func (s *PetService) PutPet(c *gin.Context) {
-	var pet *models.Pet
-
-	uid, userExists := c.Get("user")
-	if !userExists {
-		c.JSON(400, missingUserId)
-		return
+func DeletePet(DB *gorm.DB) func (c *gin.Context) {
+	return func (c *gin.Context) {
+		uid, userExists := c.Get("user")
+		if !userExists {
+			c.JSON(400, missingUserId)
+			return
+		}
+	
+		pid, err := strconv.Atoi(c.Param("petId"))
+		if err != nil {
+			c.JSON(400, idMustBeNumeric)
+			return
+		}
+	
+		if err = datasources.DeleteRecord[models.Pet](uint(pid), uint(uid.(int)), DB); err != nil {
+			c.JSON(500, err.Error())
+			return
+		}
+	
+		c.Status(204)
 	}
-
-	pid, err := strconv.Atoi(c.Param("petId"))
-	if err != nil {
-		c.JSON(400, idMustBeNumeric)
-		return
-	}
-
-	if err = c.BindJSON(&pet); err != nil {
-		c.JSON(400, err.Error())
-		return
-	}
-
-	pet.ID = uint(pid)
-
-	pet, err = datasources.UpdateRecord(uint(uid.(int)), *pet, s.DB)
-	if err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	c.JSON(201, &pet)
-}
-
-func (s *PetService) DeletePet(c *gin.Context) {
-	uid, userExists := c.Get("user")
-	if !userExists {
-		c.JSON(400, missingUserId)
-		return
-	}
-
-	pid, err := strconv.Atoi(c.Param("petId"))
-	if err != nil {
-		c.JSON(400, idMustBeNumeric)
-		return
-	}
-
-	if err = datasources.DeleteRecord[models.Pet](uint(pid), uint(uid.(int)), s.DB); err != nil {
-		c.JSON(500, err.Error())
-		return
-	}
-
-	c.Status(204)
 }
