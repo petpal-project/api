@@ -16,10 +16,6 @@ func main() {
 	petService := controllers.PetService{DB: db}
 	speciesService := controllers.SpeciesService{DB: db}
 	breedService := controllers.BreedService{DB: db}
-	foodService := controllers.FoodService{DB: db}
-	medicineService := controllers.MedicineService{DB: db}
-	eventService := controllers.EventService{DB: db}
-	imageService := controllers.ImageService{DB: db}
 
 	router := gin.Default()
 
@@ -54,49 +50,6 @@ func main() {
 		{
 			breeds.GET("/", breedService.GetBreeds)
 			breeds.GET("/:breedId", breedService.GetBreed)
-		}
-		foods := api.Group("/foods")
-		{
-			foods.GET("/:foodId", foodService.GetFood)
-			foods.GET("/", foodService.GetFoods)
-		}
-		medicines := api.Group("/medicines")
-		{
-			medicines.GET("/:medicineId", medicineService.GetMedicine)
-			medicines.GET("/", medicineService.GetMedicines)
-		}
-		// for these two groups, could we want to have a new router group like
-		// petMeals = := api.Group("/:mealId") ?
-		meals := api.Group("/meals")
-		{
-			meals.GET("/:mealId")
-			meals.GET("/pet/:petId")
-			meals.PUT("/:mealId")
-			meals.POST("/")
-			meals.DELETE("/:mealId")
-
-		}
-		medications := api.Group("/medications")
-		{
-			medications.GET("/:medicationId")
-			medications.GET("/pets/:petId")
-			medications.PUT("/:medicationId")
-			medications.POST("/")
-			medications.DELETE("/:medicationId")
-		}
-		events := api.Group("/events")
-		{
-			events.GET("/", eventService.GetEvents)
-			events.POST("/", eventService.PostEvent)
-			events.PUT("/:eventId", eventService.PutEvent)
-			events.DELETE("/:eventId", eventService.DeleteEvent)
-		}
-		images := api.Group("/images")
-		{
-			images.GET("/pets/:petId", imageService.GetImagesByPet)
-			images.GET("/users", imageService.GetImagesByUser)
-			images.POST("/", imageService.PostImage)
-			images.DELETE("/:imageId", imageService.DeleteImage)
 		}
 	}
 
