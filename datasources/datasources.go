@@ -7,7 +7,7 @@ import (
 )
 
 type QueryableStruct interface {
-	models.User | models.Pet | models.Breed | models.Species | models.Event | models.Medication | models.Medicine | models.Meal | models.Food | models.Image
+	models.User | models.Pet | models.Breed | models.Species
 	GetID() uint
 }
 
