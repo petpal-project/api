@@ -1,21 +1,28 @@
 package middleware
 
 import (
-	"strconv"
+	"net/http"
+	"strings"
 
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
 )
 
-func TempUserAuth(c *gin.Context) {
-	authHeader := c.Request.Header.Get("Authorization")
-	userId, err := strconv.Atoi(authHeader)
-	if err != nil {
-		c.JSON(401, gin.H{
-			"error": "Auth header must be a userId (int)",
-		})
-		c.Abort()
-		return
+func EnsureValidToken(v *validator.Validator) gin.HandlerFunc {
+	return func (c *gin.Context) {
+		authHeader := c.Request.Header.Get("Authorization")
+		token := strings.Replace(authHeader, "Bearer ", "", 1)
+
+		claims, err := v.ValidateToken(c.Request.Context(), token)
+		if err != nil {
+			c.Status(http.StatusUnauthorized)
+			c.Abort()
+			return;
+		}
+		validatedClaims := claims.(*validator.ValidatedClaims)
+		jwtSubject := validatedClaims.RegisteredClaims.Subject
+		
+		c.Set("user", jwtSubject)
+		c.Next()
 	}
-	c.Set("user", userId)
-	c.Next()
 }

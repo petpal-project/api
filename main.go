@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"pet-pal/api/config"
 	"pet-pal/api/controllers"
 	"pet-pal/api/middleware"
@@ -10,6 +11,11 @@ import (
 
 func main() {
 	db := config.InitDb()
+
+	validator, err := config.NewAuth0JWTValidator();
+	if err != nil {
+		log.Fatalf("Failed to set up the jwt validator")
+	}
 
 	router := gin.Default()
 
@@ -21,7 +27,7 @@ func main() {
 
 	api := router.Group("/api")
 	{
-		api.Use(middleware.TempUserAuth)
+		api.Use(middleware.EnsureValidToken(validator))
 		users := api.Group("/users")
 		{
 			users.GET("/", controllers.GetUser(db))
@@ -31,8 +37,8 @@ func main() {
 		pets := api.Group("/pets")
 		{
 			pets.GET("/", controllers.GetPets(db))
-			pets.GET("/:petId", controllers.GetPet(db))
 			pets.POST("/", controllers.PostPet(db))
+			pets.GET("/:petId", controllers.GetPet(db))
 			pets.PUT("/:petId", controllers.PutPet(db))
 			pets.DELETE("/:petId", controllers.DeletePet(db))
 		}
