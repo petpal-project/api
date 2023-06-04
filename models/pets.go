@@ -6,7 +6,7 @@ import (
 
 type Pet struct {
 	gorm.Model
-	UserID      uint         `json:"userId"`
+	UserID      string       `json:"userId"`
 	Name        string       `json:"name"`
 	Breeds      []Breed      `gorm:"many2many:pet_breeds;"`
 	SpeciesID   uint         `json:"speciesId"`
@@ -14,7 +14,7 @@ type Pet struct {
 	Age         uint         `json:"age"`
 }
 
-func (pet Pet) GetUserID() uint { return pet.UserID }
+func (pet Pet) GetUserID() string { return pet.UserID }
 func (pet Pet) GetID() uint     { return pet.ID }
 
 func (pet *Pet) BeforeUpdate(DB *gorm.DB) error {

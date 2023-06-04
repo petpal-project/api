@@ -10,9 +10,11 @@ import (
 )
 
 func main() {
+	// Initialize database connection
 	db := config.InitDb()
 
-	validator, err := config.NewAuth0JWTValidator();
+	// Initialize Auth0 token validator
+	validator, err := config.NewAuth0JWTValidator()
 	if err != nil {
 		log.Fatalf("Failed to set up the jwt validator")
 	}
@@ -28,12 +30,6 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.Use(middleware.EnsureValidToken(validator))
-		users := api.Group("/users")
-		{
-			users.GET("/", controllers.GetUser(db))
-			users.POST("/", controllers.PostUser(db))
-			users.DELETE("/", controllers.DeleteUser(db))
-		}
 		pets := api.Group("/pets")
 		{
 			pets.GET("/", controllers.GetPets(db))

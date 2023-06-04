@@ -28,10 +28,10 @@ func TestCheckOwnerShip(t *testing.T) {
 		t.Fatal("Unable to initialize GORM", err)
 	}
 
-	mockRows := sqlmock.NewRows([]string{"id", "user_id"}).AddRow(1, 1)
+	mockRows := sqlmock.NewRows([]string{"id", "user_id"}).AddRow(1, "id")
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT "user_id" FROM "pets" WHERE id = $1 AND "pets"."deleted_at" IS NULL`)).WillReturnRows(mockRows)
 	// EVENTs
-	if err := CheckOwnership[Pet](DB.Set(GORM_CONTEXT_USER_KEY, uint(1)).Set("struct", uint(1))); err != nil {
+	if err := CheckOwnership[Pet](DB.Set(GORM_CONTEXT_USER_KEY, "id").Set("struct", uint(1))); err != nil {
 		t.Fatal("Check ownership failed, wanted err = nil", err)
 	}
 
