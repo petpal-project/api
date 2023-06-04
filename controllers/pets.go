@@ -23,7 +23,7 @@ func GetPet(DB *gorm.DB) func (c *gin.Context) {
 			return
 		}
 	
-		pet, err := datasources.RetrieveSingleRecord[models.Pet](uint(pid), uint(uid.(int)), DB)
+		pet, err := datasources.RetrieveSingleRecord[models.Pet](uint(pid), uid.(string), DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 			return
@@ -42,7 +42,7 @@ func GetPets(DB *gorm.DB) func(c *gin.Context) {
 			return
 		}
 
-		pets, err := datasources.RetrieveMultipleRecords[models.Pet](uint(uid.(int)), DB)
+		pets, err := datasources.RetrieveMultipleRecords[models.Pet](uid.(string), DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 			return
@@ -67,7 +67,7 @@ func PostPet(DB *gorm.DB) func(c *gin.Context) {
 			return
 		}
 	
-		pet.UserID = uint(uid.(int))
+		pet.UserID = uid.(string)
 		if err := datasources.CreateRecord(pet, DB); err != nil {
 			c.JSON(500, err.Error())
 			return
@@ -100,7 +100,7 @@ func PutPet(DB *gorm.DB) func (c *gin.Context) {
 	
 		pet.ID = uint(pid)
 	
-		pet, err = datasources.UpdateRecord(uint(uid.(int)), *pet, DB)
+		pet, err = datasources.UpdateRecord(uid.(string), *pet, DB)
 		if err != nil {
 			c.JSON(500, err.Error())
 			return
@@ -124,7 +124,7 @@ func DeletePet(DB *gorm.DB) func (c *gin.Context) {
 			return
 		}
 	
-		if err = datasources.DeleteRecord[models.Pet](uint(pid), uint(uid.(int)), DB); err != nil {
+		if err = datasources.DeleteRecord[models.Pet](uint(pid), uid.(string), DB); err != nil {
 			c.JSON(500, err.Error())
 			return
 		}

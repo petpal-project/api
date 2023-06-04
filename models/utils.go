@@ -14,7 +14,7 @@ const GORM_CONTEXT_MISSING_OBJECT = "missing object id"
 
 type OwnedObject interface {
 	Pet
-	GetUserID() uint
+	GetUserID() string
 	GetID() uint
 }
 
